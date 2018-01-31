@@ -21,3 +21,8 @@ class Snatch3r(object):
     
     # TODO: Implement the Snatch3r class as needed when working the sandox exercises
     # (and delete these comments)
+    def __init__(self):
+
+
+    def drive_inches(self, inches_to_drive, drive_speed_sp):
+
