@@ -12,17 +12,22 @@
 """
 
 import ev3dev.ev3 as ev3
-import math
-import time
 
 
 class Snatch3r(object):
     """Commands for the Snatch3r robot that might be useful in many different programs."""
-    
-    # TODO: Implement the Snatch3r class as needed when working the sandox exercises
-    # (and delete these comments)
+
     def __init__(self):
+        self.left_motor = ev3.LargeMotor(ev3.OUTPUT_B)
+        self.right_motor = ev3.LargeMotor(ev3.OUTPUT_C)
+        assert self.left_motor.connected
+        assert self.right_motor.connected
 
+    def drive_inches(self, inches_target, speed_deg_per_second):
+        """"Drives to a given relative position with a given speed"""
+        self.left_motor.run_to_rel_pos(speed_sp=speed_deg_per_second, position_sp=90*inches_target)
+        self.right_motor.run_to_rel_pos(speed_sp=speed_deg_per_second, position_sp=90*inches_target)
+        self.left_motor.wait_while(ev3.Motor.STATE_RUNNING)
+        self.right_motor.wait_while(ev3.Motor.STATE_RUNNING)
 
-    def drive_inches(self, inches_to_drive, drive_speed_sp):
-
+#    def turn_degrees(self, degrees_to_turn, turn_speed_sp):

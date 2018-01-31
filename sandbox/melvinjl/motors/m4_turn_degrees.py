@@ -13,6 +13,9 @@ Authors: David Fisher and Josh Melvin.
 #     print("--------------------------------------------")
 #     ev3.Sound.speak("Turn degrees").wait()
 #   You will need to modify that code for this problem, but it is a handy starting point.
+import ev3dev.ev3 as ev3
+import robot_controller as robo
+
 def main():
     while True:
         speed_deg_per_second = int(input("Speed (0 to 900 dps): "))

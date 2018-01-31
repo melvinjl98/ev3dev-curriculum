@@ -27,20 +27,20 @@ def main():
     assert left_motor.connected
     assert right_motor.connected
 
-    time_s = 1  # Any value other than 0.
-    while time_s != 0:
+    while True:
         speed = int(input("Enter a speed (0 to 900 dps): "))
+        if speed == 0:
+            break
 #       distance = int(input("Distance to travel (inches): "))
         position = int(input("Relative position to travel to travel (inches): "))
-        left_motor.run_to_rel_pos(speed_sp = speed, position_sp = 90 * position)
-        right_motor.run_to_rel_pos(speed_sp = speed, position_sp = 90 * position)
+        if position == 0:
+            break
+        left_motor.run_to_rel_pos(speed_sp=speed, position_sp=90*position)
+        right_motor.run_to_rel_pos(speed_sp=speed, position_sp=90*position)
         left_motor.wait_while(ev3.Motor.STOP_ACTION_COAST)
         right_motor.wait_while(ev3.Motor.STOP_ACTION_COAST)
-        if (speed == 0):
-            break
-#        if (distance == 0):
+#       if (distance == 0):
 #            break
-
 #       time.sleep(distance / (.01064 * speed))
 #       left_motor.stop()
 #       right_motor.stop()
@@ -80,7 +80,7 @@ def main():
 #   400 dps -36 inches (make sure it drives within 3 inches of the target distance)
 # Add more tests as you see fit.  Ideally you should be +/- 10% of the target goal this time.
 
-# TODO: 7. Call over a TA or instructor to sign your team's checkoff sheet and do a code review.
+# DONE: 7. Call over a TA or instructor to sign your team's checkoff sheet and do a code review.
 #
 # Observations you should make, run_to_rel_pos is easier to use since it uses encoders that are independent of speed.
 

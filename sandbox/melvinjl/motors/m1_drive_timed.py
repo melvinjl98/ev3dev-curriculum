@@ -83,17 +83,16 @@ def main():
     assert left_motor.connected
     assert right_motor.connected
 
-    time_s = 1  # Any value other than 0.
-    while time_s != 0:
+    while True:
         speed = int(input("Enter a speed (0 to 900 dps):"))
-        distance = int(input("Distance to travel (inches):"))
-        left_motor.run_forever(speed_sp = speed)
-        right_motor.run_forever(speed_sp = speed)
         if speed == 0:
             break
+        distance = int(input("Distance to travel (inches):"))
         if distance == 0:
             break
-        time.sleep(distance / (.01064 * speed))
+        left_motor.run_forever(speed_sp=speed)
+        right_motor.run_forever(speed_sp=speed)
+        time.sleep(distance / (.01064*speed))
         left_motor.stop()
         right_motor.stop()
 
@@ -123,7 +122,7 @@ def main():
 #   400 dps 36 inches (make sure it drives within 9 inches of the target distance)
 # Do more tests if you see fit.  Ideally you should be +/- 25% of the target goal.
 #
-# TODO: 8. Call over a TA or instructor to sign your team's checkoff sheet and do a code review.
+# DONE: 8. Call over a TA or instructor to sign your team's checkoff sheet and do a code review.
 #
-#  Observation you should make, the pattern run_forever-->time.sleep-->stop naturally blocks code execution until done.
+# Observation you should make, the pattern run_forever-->time.sleep-->stop naturally blocks code execution until done.
 main()
