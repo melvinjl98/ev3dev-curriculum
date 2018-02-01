@@ -25,14 +25,16 @@ class Snatch3r(object):
 
     def drive_inches(self, inches_target, speed_deg_per_second):
         """"Drives to a given relative position with a given speed"""
-        self.left_motor.run_to_rel_pos(speed_sp=speed_deg_per_second, position_sp=-inches_target*5)
-        self.right_motor.run_to_rel_pos(speed_sp=speed_deg_per_second, position_sp=inches_target*5)
+        self.left_motor.run_to_rel_pos(speed_sp=speed_deg_per_second, position_sp=inches_target*90)
+        self.right_motor.run_to_rel_pos(speed_sp=speed_deg_per_second, position_sp=inches_target*90)
         self.left_motor.wait_while(ev3.Motor.STATE_RUNNING)
         self.right_motor.wait_while(ev3.Motor.STATE_RUNNING)
+        ev3.Sound.beep().wait()
 
     def turn_degrees(self, degrees_to_turn, turn_speed_sp):
-        """"""
-        self.left_motor.run_to_rel_pos(speed_sp=turn_speed_sp, position_sp=-degrees_to_turn*5)
-        self.right_motor.run_to_rel_pos(speed_sp= turn_speed_sp, position_sp=degrees_to_turn*5)
+        """turn a given degrees at a given speed"""
+        self.left_motor.run_to_rel_pos(speed_sp=turn_speed_sp, position_sp=-degrees_to_turn*4.95)
+        self.right_motor.run_to_rel_pos(speed_sp= turn_speed_sp, position_sp=degrees_to_turn*4.95)
         self.left_motor.wait_while(ev3.Motor.STATE_RUNNING)
         self.right_motor.wait_while(ev3.Motor.STATE_RUNNING)
+        ev3.Sound.beep().wait()
