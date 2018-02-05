@@ -36,7 +36,7 @@ def main():
     # Beep is a simple and useful sound.
     ev3.Sound.beep().wait()
     ev3.Sound.beep().wait()
-    print('Press Ctrl C on your keyboard to exit this program (the Back button is not wired up to exit)')
+    print('Press Back to exit this program.')
 
     # Making a simple class is the best way to pass around data between different events.
     dc = DataContainer()
@@ -56,7 +56,7 @@ def main():
     btn.on_left = handle_left_button
     btn.on_right = handle_right_button
 
-    # TODO: 5. Note #4 is lower (this is TO DO #5 which you should do after #4).
+    # DONE: 5. Note #4 is lower (this is  #5 which you should do after #4).
     # Add a lambda callback for on_backspace.  The syntax of lambda is:
     #   btn.on_backspace = lamdba predefined_inputs: function_name(parameters)
     # You will need to change the predefined_inputs, function_name, and parameters from that syntax template.
@@ -66,7 +66,7 @@ def main():
     while dc.running:
         btn.process()  # This command is VERY important when using button callbacks!
         time.sleep(0.01)  # A short delay is important to allow other things to happen.
-        btn.on_backspace = lamdba state: handle_shutdown(state, dc)
+        btn.on_backspace = lambda state: handle_shutdown(state, dc)
     print("Goodbye!")
     ev3.Sound.speak("Goodbye").wait()
 
@@ -121,7 +121,7 @@ def handle_right_button(button_state):
     else:
         print("Right button was released")
 
-# TODO: 6. Implement the handle_shutdown function.
+# DONE: 6. Implement the handle_shutdown function.
 #   Function signature should be:
 #       def handle_shutdown(button_state, dc):
 #   When the button is pressed (state is True)
@@ -134,6 +134,10 @@ def handle_right_button(button_state):
 #    "Press Ctrl C on your keyboard to exit this program (the Back button is not wired up to exit)"
 # to instead say "Press Back to exit this program."
 def handle_shutdown(button_state, dc):
+    if button_state:
+        print("back")
+        dc.running = False
+
 
 # TODO: 7. Call over a TA or instructor to sign your team's checkoff sheet and do a code review.
 #
