@@ -36,7 +36,7 @@ import robot_controller as robo
 robot = robo.Snatch3r()
 
 # Note that todo2 is farther down in the code.  That method needs to be written before you do todo3.
-# TODO: 3. Have someone on your team run this program on the EV3 and make sure everyone understands the code.
+# DONE: 3. Have someone on your team run this program on the EV3 and make sure everyone understands the code.
 # Can you see what the robot does and explain what each line of code is doing? Talk as a group to make sure.
 
 
@@ -60,19 +60,19 @@ def main():
     robot = robo.Snatch3r()
     dc = DataContainer()
 
-    # TODO: 4. Add the necessary IR handler callbacks as per the instructions above.
+    # DONE: 4. Add the necessary IR handler callbacks as per the instructions above.
     # Remote control channel 1 is for driving the crawler tracks around (none of these functions exist yet below).
     # Remote control channel 2 is for moving the arm up and down (all of these functions already exist below).
     btn1 = ev3.RemoteControl(channel=1)
-    btn1.on_red_up = lambda state: handle_left_forward(state, dc)
-    btn1.on_red_down = lambda state: handle_left_back(state, dc)
-    btn1.on_blue_up = lambda state: handle_right_forward(state, dc)
-    btn1.on_blue_down = lambda state: handle_right_back(state, dc)
+    btn1.on_red_up = lambda state: handle_left_forward(state, robot.left_motor)
+    btn1.on_red_down = lambda state: handle_left_back(state, robot.left_motor)
+    btn1.on_blue_up = lambda state: handle_right_forward(state, robot.right_motor)
+    btn1.on_blue_down = lambda state: handle_right_back(state, robot.right_motor)
 
     btn2 = ev3.RemoteControl(channel=2)
-    btn2.on_red_up = lambda state: handle_arm_up_button(state, dc)
-    btn2.on_red_down = lambda state: handle_arm_down_button(state, dc)
-    btn2.on_blue_up = lambda state: handle_calibrate_button(state, dc)
+    btn2.on_red_up = lambda state: handle_arm_up_button(state, robot)
+    btn2.on_red_down = lambda state: handle_arm_down_button(state, robot)
+    btn2.on_blue_up = lambda state: handle_calibrate_button(state, robot)
 
     # For our standard shutdown button.
     btn = ev3.Button()
@@ -99,29 +99,47 @@ def main():
 # Some event handlers have been written for you (ones for the arm).
 # Movement event handlers have not been provided.
 # ----------------------------------------------------------------------
-# TODO: 6. Implement the IR handler callbacks handlers.
+# DONE: 6. Implement the IR handler callbacks handlers.
 
 # TODO: 7. When your program is complete, call over a TA or instructor to sign your checkoff sheet and do a code review.
 #
 # Observations you should make, IR buttons are a fun way to control the robot.
 
-def handle_left_forward(button_state, dc):
+
+def handle_left_forward(button_state, motor):
     if button_state:
+        motor.run_forever(speed_sp=600)
+        ev3.Leds.set_color(ev3.Leds.LEFT, ev3.Leds.GREEN)
+    else:
+        motor.stop()
+        ev3.Leds.set_color(ev3.Leds.LEFT, ev3.Leds.BLACK)
 
 
-
-def handle_left_back(button_state, dc):
+def handle_left_back(button_state, motor):
     if button_state:
+        motor.run_forever(speed_sp=-600)
+        ev3.Leds.set_color(ev3.Leds.LEFT, ev3.Leds.RED)
+    else:
+        motor.stop()
+        ev3.Leds.set_color(ev3.Leds.LEFT, ev3.Leds.BLACK)
 
 
-
-def handle_right_forward(button_state, dc):
+def handle_right_forward(button_state, motor):
     if button_state:
+        motor.run_forever(speed_sp=600)
+        ev3.Leds.set_color(ev3.Leds.RIGHT, ev3.Leds.GREEN)
+    else:
+        motor.stop()
+        ev3.Leds.set_color(ev3.Leds.RIGHT, ev3.Leds.BLACK)
 
 
-
-def handle_right_back(button_state, dc):
+def handle_right_back(button_state, motor):
     if button_state:
+        motor.run_forever(speed_sp=-600)
+        ev3.Leds.set_color(ev3.Leds.RIGHT, ev3.Leds.RED)
+    else:
+        motor.stop()
+        ev3.Leds.set_color(ev3.Leds.RIGHT, ev3.Leds.BLACK)
 
 
 def handle_arm_up_button(button_state, robot):
