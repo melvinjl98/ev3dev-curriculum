@@ -114,7 +114,7 @@ def left_mouse_click(event, mqtt_client):
     parameters = [my_color, event.x, event.y]
     canvas = event.widget
     my_delegate = MyDelegate(canvas)
-    mqtt_client = com.MqttClient(my_delegate)
+    com.MqttClient(mqtt_client)
     mqtt_client.connect("draw", "draw", "mosquitto.csse.rose-hulman.edu", lego_robot_number=13)
     my_delegate.on_circle_draw(my_color, event.x, event.y)
 
