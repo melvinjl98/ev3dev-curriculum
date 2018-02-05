@@ -21,8 +21,8 @@ Which will probably not require you to type the password since sudo was just run
 
 BTW chvt means CHange the Virtual Terminal, and 86ing something means to kick it out.
 
-Authors: David Fisher and PUT_YOUR_NAME_HERE.
-"""  # TODO: 1. PUT YOUR NAME IN THE ABOVE LINE.
+Authors: David Fisher and William Makinen.
+"""  # DONE: 1. PUT YOUR NAME IN THE ABOVE LINE.
 
 import ev3dev.ev3 as ev3
 import time
@@ -66,8 +66,8 @@ def main():
     # Object that is storing references to images that can be passed into callbacks.
     dc = DataContainer()
 
-    display_image(dc.lcd_screen, dc.eyes)  # Display an image on the EV3 screen
-    ev3.Sound.speak("I R events with the Screen").wait()
+    # display_image(dc.lcd_screen, dc.eyes)  # Display an image on the EV3 screen
+    # ev3.Sound.speak("I R events with the Screen").wait()
 
     # TODO: 3. Create a remote control object for channel 1. Add lambda callbacks for:
     #   .on_red_up    to call handle_red_up_1    (that exist already) with state and dc as parameters
@@ -75,10 +75,24 @@ def main():
     #   .on_blue_up   to call handle_blue_up_1   (that exist already) with state and dc as parameters
     #   .on_blue_down to call handle_blue_down_1 (that exist already) with state and dc as parameters
 
+    btn1 = ev3.RemoteControl(channel=1)
+    btn1.on_red_up = lambda state1: handle_red_up_1(state1, dc)
+    btn1.on_red_down = lambda state1: handle_red_down_1(state1, dc)
+    btn1.on_blue_up = lambda state1: handle_blue_up_1(state1, dc)
+    btn1.on_blue_down = lambda state1: handle_blue_down_1(state1, dc)
+
     # TODO: 5. Create remote control objects for channels 2, 3, and 4. Add lambda callbacks for on_red_up to each one:
     #   Channel 2's .on_red_up should call handle_red_up_2 (that exist already) with state and dc as parameters
     #   Channel 3's .on_red_up should call handle_red_up_3 (that exist already) with state and dc as parameters
     #   Channel 4's .on_red_up should call handle_red_up_4 (that exist already) with state and dc as parameters
+
+    btn2 = ev3.RemoteControl(channel=2)
+    btn3 = ev3.RemoteControl(channel=3)
+    btn4 = ev3.RemoteControl(channel=4)
+    btn2.on_red_up = lambda state2: handle_red_up_2(state2, dc)
+    btn3.on_red_up = lambda state3: handle_red_up_2(state3, dc)
+    btn4.on_red_up = lambda state4: handle_red_up_2(state4, dc)
+
 
     # Buttons on EV3
     btn = ev3.Button()
@@ -88,8 +102,14 @@ def main():
         # TODO: 4. Call the .process() method on your channel 1 RemoteControl object, then review and run your code.
         #   Review the handle functions below to see how they draw to the screen.  They are already finished.
 
+        btn1.process()
+
         # TODO: 6. Call the .process() method on your channel 2 - 4 RemoteControl objects and demo your code.
         #   Review the handle functions below to see how they draw to the screen.  They are already finished.
+
+        btn2.process()
+        btn3.process()
+        btn4.process()
 
         # TODO: 7. Call over a TA or instructor to sign your team's checkoff sheet and do a code review.
         #

@@ -35,7 +35,7 @@ def main():
         right_motor.stop(stop_action="brake")
 
     print("Goodbye")
-    ev3.Sound.speak("Get the Fuck outta Here!").wait()
+    ev3.Sound.speak("Get the truck outta Here!").wait()
 
 
 # ----------------------------------------------------------------------
