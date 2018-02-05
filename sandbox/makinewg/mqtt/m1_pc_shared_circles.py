@@ -112,11 +112,10 @@ def left_mouse_click(event, mqtt_client):
     # All of your teammates should receive the message and create a circle of your color at your click location.
     # Additionally you will receive your own message and draw a circle in your color too.
 
+    parameters = [my_color, event.x, event.y]
     canvas = event.widget
     my_delegate = MyDelegate(canvas)
-    com.MqttClient(mqtt_client)
-    mqtt_client.connect("draw", "draw", "mosquitto.csse.rose-hulman.edu", lego_robot_number=13) #??
-    parameters = [my_color, event.x, event.y]
+    mqtt_client.send_message("on_my_circle_draw", parameters)
     my_delegate.on_circle_draw(my_color, event.x, event.y)
 
 
