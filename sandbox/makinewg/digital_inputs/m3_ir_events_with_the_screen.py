@@ -90,8 +90,8 @@ def main():
     btn3 = ev3.RemoteControl(channel=3)
     btn4 = ev3.RemoteControl(channel=4)
     btn2.on_red_up = lambda state2: handle_red_up_2(state2, dc)
-    btn3.on_red_up = lambda state3: handle_red_up_2(state3, dc)
-    btn4.on_red_up = lambda state4: handle_red_up_2(state4, dc)
+    btn3.on_red_up = lambda state3: handle_red_up_3(state3, dc)
+    btn4.on_red_up = lambda state4: handle_red_up_4(state4, dc)
 
 
     # Buttons on EV3
