@@ -33,6 +33,8 @@ import time
 
 import robot_controller as robo
 
+robot = robo.Snatch3r()
+
 # Note that todo2 is farther down in the code.  That method needs to be written before you do todo3.
 # TODO: 3. Have someone on your team run this program on the EV3 and make sure everyone understands the code.
 # Can you see what the robot does and explain what each line of code is doing? Talk as a group to make sure.
@@ -61,6 +63,16 @@ def main():
     # TODO: 4. Add the necessary IR handler callbacks as per the instructions above.
     # Remote control channel 1 is for driving the crawler tracks around (none of these functions exist yet below).
     # Remote control channel 2 is for moving the arm up and down (all of these functions already exist below).
+    btn1 = ev3.RemoteControl(channel=1)
+    btn1.on_red_up = lambda state: handle_left_forward(state, dc)
+    btn1.on_red_down = lambda state: handle_left_back(state, dc)
+    btn1.on_blue_up = lambda state: handle_right_forward(state, dc)
+    btn1.on_blue_down = lambda state: handle_right_back(state, dc)
+
+    btn2 = ev3.RemoteControl(channel=2)
+    btn2.on_red_up = lambda state: handle_arm_up_button(state, dc)
+    btn2.on_red_down = lambda state: handle_arm_down_button(state, dc)
+    btn2.on_blue_up = lambda state: handle_calibrate_button(state, dc)
 
     # For our standard shutdown button.
     btn = ev3.Button()
@@ -69,11 +81,13 @@ def main():
     robot.arm_calibration()  # Start with an arm calibration in this program.
 
     while dc.running:
-        # TODO: 5. Process the RemoteControl objects.
+        # DONE: 5. Process the RemoteControl objects.
+        btn1.process()
+        btn2.process()
         btn.process()
         time.sleep(0.01)
 
-    # TODO: 2. Have everyone talk about this problem together then pick one  member to modify libs/robot_controller.py
+    # DONE: 2. Have everyone talk about this problem together then pick one  member to modify libs/robot_controller.py
     # as necessary to implement the method below as per the instructions in the opening doc string. Once the code has
     # been tested and shown to work, then have that person commit their work.  All other team members need to do a
     # VCS --> Update project...
@@ -90,6 +104,24 @@ def main():
 # TODO: 7. When your program is complete, call over a TA or instructor to sign your checkoff sheet and do a code review.
 #
 # Observations you should make, IR buttons are a fun way to control the robot.
+
+def handle_left_forward(button_state, dc):
+    if button_state:
+
+
+
+def handle_left_back(button_state, dc):
+    if button_state:
+
+
+
+def handle_right_forward(button_state, dc):
+    if button_state:
+
+
+
+def handle_right_back(button_state, dc):
+    if button_state:
 
 
 def handle_arm_up_button(button_state, robot):
