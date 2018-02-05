@@ -46,6 +46,7 @@ class Snatch3r(object):
         ev3.Sound.beep().wait()
 
     def arm_calibration(self):
+        """Calibrate the arm motor position"""
         self.arm_motor.run_forever(speed_sp=self.MAX_SPEED)
         while True:
             time.sleep(0.01)
@@ -61,6 +62,7 @@ class Snatch3r(object):
         self.arm_motor.position = 0
 
     def arm_up(self):
+        """Move the arm up"""
         self.arm_motor.run_forever(speed_sp=self.MAX_SPEED)
         while True:
             time.sleep(0.01)
@@ -70,11 +72,13 @@ class Snatch3r(object):
         ev3.Sound.beep().wait()
 
     def arm_down(self):
+        """Move the arm down"""
         self.arm_motor.run_to_abs_pos(position_sp=0, speed_sp=self.MAX_SPEED)
         self.arm_motor.wait_while(ev3.Motor.STATE_RUNNING)  # Blocks until the motor finishes running
         ev3.Sound.beep().wait()
 
     def shutdown(self):
+        """Turn off all motors turn LEDs green, and stop all other code"""
         self.left_motor.stop(stop_action = "brake")
         self.right_motor.stop(stop_action = "brake")
         self.arm_motor.stop(stop_action = "brake")
