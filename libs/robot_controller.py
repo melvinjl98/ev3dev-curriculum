@@ -12,7 +12,9 @@
 """
 
 import ev3dev.ev3 as ev3
+import time
 
+MAX_SPEED = 900
 
 class Snatch3r(object):
     """Commands for the Snatch3r robot that might be useful in many different programs."""
@@ -37,4 +39,51 @@ class Snatch3r(object):
         self.right_motor.run_to_rel_pos(speed_sp= turn_speed_sp, position_sp=degrees_to_turn*4.95)
         self.left_motor.wait_while(ev3.Motor.STATE_RUNNING)
         self.right_motor.wait_while(ev3.Motor.STATE_RUNNING)
+        ev3.Sound.beep().wait()
+
+    def arm_calibration(self):
+        arm_motor = ev3.MediumMotor(ev3.OUTPUT_A)
+        assert arm_motor.connected
+
+        touch_sensor = ev3.TouchSensor()
+        assert touch_sensor
+
+        arm_motor.run_forever(speed_sp=MAX_SPEED)
+        while True:
+            time.sleep(0.01)
+            if touch_sensor.is_pressed:
+                break
+        arm_motor.stop(stop_action="brake")
+        ev3.Sound.beep().wait()
+
+        arm_revolutions_for_full_range = 14.2 * 360
+        arm_motor.run_to_rel_pos(position_sp=-arm_revolutions_for_full_range, speed_sp=MAX_SPEED)
+        arm_motor.wait_while(ev3.Motor.STATE_RUNNING)
+        ev3.Sound.beep().wait()
+        arm_motor.position = 0
+
+    def arm_up(self):
+        arm_motor = ev3.MediumMotor(ev3.OUTPUT_A)
+        assert arm_motor.connected
+
+        touch_sensor = ev3.TouchSensor()
+        assert touch_sensor
+
+        arm_motor.run_forever(speed_sp=MAX_SPEED)
+        while True:
+            time.sleep(0.01)
+            if touch_sensor.is_pressed:
+                break
+        arm_motor.stop(stop_action="brake")
+        ev3.Sound.beep().wait()
+
+    def arm_down(self):
+        arm_motor = ev3.MediumMotor(ev3.OUTPUT_A)
+        assert arm_motor.connected
+
+        touch_sensor = ev3.TouchSensor()
+        assert touch_sensor
+
+        arm_motor.run_to_abs_pos(position_sp=0, speed_sp=MAX_SPEED)
+        arm_motor.wait_while(ev3.Motor.STATE_RUNNING)  # Blocks until the motor finishes running
         ev3.Sound.beep().wait()
