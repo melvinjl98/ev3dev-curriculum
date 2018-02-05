@@ -115,7 +115,7 @@ def left_mouse_click(event, mqtt_client):
     canvas = event.widget
     my_delegate = MyDelegate(canvas)
     com.MqttClient(mqtt_client)
-    mqtt_client.send_message("on_my_circle_draw", parameters)
+    mqtt_client.send_message("on_circle_draw", parameters)
     my_delegate.on_circle_draw(my_color, event.x, event.y)
 
     # TODO: 8. Help get everyone on your team running this program at the same time.
