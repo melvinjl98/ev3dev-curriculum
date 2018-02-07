@@ -22,8 +22,8 @@ You will need to have the following features:
 
 You can start by running the code to see the GUI, but don't expect button clicks to do anything useful yet.
 
-Authors: David Fisher and PUT_YOUR_NAME_HERE.
-"""  # TODO: 1. PUT YOUR NAME IN THE ABOVE LINE.
+Authors: David Fisher and Josh Melvin.
+"""  # DONE: 1. PUT YOUR NAME IN THE ABOVE LINE.
 
 import tkinter
 from tkinter import ttk
@@ -32,9 +32,10 @@ import mqtt_remote_method_calls as com
 
 
 def main():
-    # TODO: 2. Setup an mqtt_client.  Notice that since you don't need to receive any messages you do NOT need to have
+    # DONE: 2. Setup an mqtt_client.  Notice that since you don't need to receive any messages you do NOT need to have
     # a MyDelegate class.  Simply construct the MqttClient with no parameter in the constructor (easy).
-    mqtt_client = None  # Delete this line, it was added temporarily so that the code we gave you had no errors.
+    mqtt_client = com.MqttClient()
+    mqtt_client.connect_to_ev3("mosquitto.csse.rose-hulman.edu", 13)
 
     root = tkinter.Tk()
     root.title("MQTT Remote")
@@ -54,7 +55,7 @@ def main():
     right_speed_entry.insert(0, "600")
     right_speed_entry.grid(row=1, column=2)
 
-    # TODO: 3. Implement the callbacks for the drive buttons. Set both the click and shortcut key callbacks.
+    # DONE: 3. Implement the callbacks for the drive buttons. Set both the click and shortcut key callbacks.
     #
     # To help get you started the arm up and down buttons have been implemented.
     # You need to implement the five drive buttons.  One has been writen below to help get you started but is commented
@@ -63,24 +64,32 @@ def main():
     forward_button = ttk.Button(main_frame, text="Forward")
     forward_button.grid(row=2, column=1)
     # forward_button and '<Up>' key is done for your here...
-    # forward_button['command'] = lambda: some_callback1(mqtt_client, left_speed_entry, right_speed_entry)
-    # root.bind('<Up>', lambda event: some_callback1(mqtt_client, left_speed_entry, right_speed_entry))
+    forward_button['command'] = lambda: go_forward(mqtt_client, left_speed_entry, right_speed_entry)
+    root.bind('<Up>', lambda event: go_forward(mqtt_client, left_speed_entry, right_speed_entry))
 
     left_button = ttk.Button(main_frame, text="Left")
     left_button.grid(row=3, column=0)
     # left_button and '<Left>' key
+    left_button['command'] = lambda: go_left(mqtt_client, left_speed_entry, right_speed_entry)
+    root.bind('<Left>', lambda event: go_left(mqtt_client, left_speed_entry, right_speed_entry))
 
     stop_button = ttk.Button(main_frame, text="Stop")
     stop_button.grid(row=3, column=1)
     # stop_button and '<space>' key (note, does not need left_speed_entry, right_speed_entry)
+    stop_button['command'] = lambda: stop_bot(mqtt_client, left_speed_entry, right_speed_entry)
+    root.bind('<space>', lambda event: stop_bot(mqtt_client, left_speed_entry, right_speed_entry))
 
     right_button = ttk.Button(main_frame, text="Right")
     right_button.grid(row=3, column=2)
     # right_button and '<Right>' key
+    right_button['command'] = lambda: go_right(mqtt_client, left_speed_entry, right_speed_entry)
+    root.bind('<Right>', lambda event: go_right(mqtt_client, left_speed_entry, right_speed_entry))
 
     back_button = ttk.Button(main_frame, text="Back")
     back_button.grid(row=4, column=1)
     # back_button and '<Down>' key
+    back_button['command'] = lambda: go_back(mqtt_client, left_speed_entry, right_speed_entry)
+    root.bind('<Down>', lambda event: go_back(mqtt_client, left_speed_entry, right_speed_entry))
 
     up_button = ttk.Button(main_frame, text="Up")
     up_button.grid(row=5, column=0)
@@ -113,6 +122,48 @@ def main():
 #
 # Observations you should make, you did basically this same program using the IR Remote, but your computer can be a
 # remote control that can do A LOT more than an IR Remote.  We are just doing the basics here.
+def go_forward(button_state, motor):
+    if button_state:
+        motor.run_forever(speed_sp=600)
+        ev3.Leds.set_color(ev3.Leds.LEFT, ev3.Leds.GREEN)
+    else:
+        motor.stop()
+        ev3.Leds.set_color(ev3.Leds.LEFT, ev3.Leds.BLACK)
+
+
+def go_left(button_state, motor):
+    if button_state:
+        motor.run_forever(speed_sp=-600)
+        ev3.Leds.set_color(ev3.Leds.LEFT, ev3.Leds.RED)
+    else:
+        motor.stop()
+        ev3.Leds.set_color(ev3.Leds.LEFT, ev3.Leds.BLACK)
+
+
+def stop_bot(button_state, motor):
+    if button_state:
+        motor.run_forever(speed_sp=600)
+        ev3.Leds.set_color(ev3.Leds.RIGHT, ev3.Leds.GREEN)
+    else:
+        motor.stop()
+        ev3.Leds.set_color(ev3.Leds.RIGHT, ev3.Leds.BLACK)
+
+
+def go_right(button_state, motor):
+    if button_state:
+        motor.run_forever(speed_sp=-600)
+        ev3.Leds.set_color(ev3.Leds.RIGHT, ev3.Leds.RED)
+    else:
+        motor.stop()
+        ev3.Leds.set_color(ev3.Leds.RIGHT, ev3.Leds.BLACK)
+
+def go_back(button_state, motor):
+    if button_state:
+        motor.run_forever(speed_sp=-600)
+        ev3.Leds.set_color(ev3.Leds.RIGHT, ev3.Leds.RED)
+    else:
+        motor.stop()
+        ev3.Leds.set_color(ev3.Leds.RIGHT, ev3.Leds.BLACK)
 
 
 # Arm command callbacks

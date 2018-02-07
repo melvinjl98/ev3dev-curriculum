@@ -24,6 +24,7 @@ class Snatch3r(object):
         self.arm_motor = ev3.MediumMotor(ev3.OUTPUT_A)
         self.touch_sensor = ev3.TouchSensor()
         self.MAX_SPEED = 900
+        self.running=True
         assert self.left_motor.connected
         assert self.right_motor.connected
         assert self.arm_motor.connected
@@ -89,6 +90,5 @@ class Snatch3r(object):
         ev3.Sound.speak('Goodbye').wait()
 
     def loop_forever(self):
-        self.running=True
         while self.running:
             time.sleep(0.1)
