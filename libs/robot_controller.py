@@ -19,12 +19,13 @@ class Snatch3r(object):
     """Commands for the Snatch3r robot that might be useful in many different programs."""
 
     def __init__(self):
+        """Creats a Snatch3r object"""
         self.left_motor = ev3.LargeMotor(ev3.OUTPUT_B)
         self.right_motor = ev3.LargeMotor(ev3.OUTPUT_C)
         self.arm_motor = ev3.MediumMotor(ev3.OUTPUT_A)
         self.touch_sensor = ev3.TouchSensor()
         self.MAX_SPEED = 900
-        self.running=True
+        self.running = True
         assert self.left_motor.connected
         assert self.right_motor.connected
         assert self.arm_motor.connected
@@ -41,7 +42,7 @@ class Snatch3r(object):
     def turn_degrees(self, degrees_to_turn, turn_speed_sp):
         """turn a given degrees at a given speed"""
         self.left_motor.run_to_rel_pos(speed_sp=turn_speed_sp, position_sp=-degrees_to_turn*4.95)
-        self.right_motor.run_to_rel_pos(speed_sp= turn_speed_sp, position_sp=degrees_to_turn*4.95)
+        self.right_motor.run_to_rel_pos(speed_sp=turn_speed_sp, position_sp=degrees_to_turn*4.95)
         self.left_motor.wait_while(ev3.Motor.STATE_RUNNING)
         self.right_motor.wait_while(ev3.Motor.STATE_RUNNING)
         ev3.Sound.beep().wait()
@@ -80,15 +81,40 @@ class Snatch3r(object):
 
     def shutdown(self):
         """Turn off all motors turn LEDs green, and stop all other code"""
-        self.left_motor.stop(stop_action = "brake")
-        self.right_motor.stop(stop_action = "brake")
-        self.arm_motor.stop(stop_action = "brake")
-        self.running=False
+        self.left_motor.stop(stop_action="brake")
+        self.right_motor.stop(stop_action="brake")
+        self.arm_motor.stop(stop_action="brake")
+        self.running = False
         ev3.Leds.set_color(ev3.Leds.LEFT, ev3.Leds.GREEN)
         ev3.Leds.set_color(ev3.Leds.RIGHT, ev3.Leds.GREEN)
         print('Goodbye')
         ev3.Sound.speak('Goodbye').wait()
 
     def loop_forever(self):
+        """Creates a never ending loop"""
         while self.running:
             time.sleep(0.1)
+
+    def drive(self, left_speed, right_speed):
+        """Turns motors on at given speeds"""
+        self.left_motor.run_forever(speed_sp=left_speed)
+        self.right_motor.run_forever(speed_sp=right_speed)
+
+    def turn_right(self, left_speed, right_speed):
+        """Turn Motors on to turn right"""
+        self.left_motor.run_forever(speed_sp=left_speed)
+        self.right_motor.run_forever(speed_sp=-right_speed)
+
+    def turn_left(self, left_speed, right_speed):
+        """Turn Motors on to turn left"""
+        self.left_motor.run_forever(speed_sp=-left_speed)
+        self.right_motor.run_forever(speed_sp=right_speed)
+
+    def back(self, left_speed, right_speed):
+        self.left_motor.run_forever(speed_sp=-left_speed)
+        self.right_motor.run_forever(speed_sp=-right_speed)
+
+    def stop_bot(self):
+        """Stops both motors"""
+        self.left_motor.stop(stop_action="brake")
+        self.right_motor.stop(stop_action="brake")
