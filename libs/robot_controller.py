@@ -24,12 +24,16 @@ class Snatch3r(object):
         self.right_motor = ev3.LargeMotor(ev3.OUTPUT_C)
         self.arm_motor = ev3.MediumMotor(ev3.OUTPUT_A)
         self.touch_sensor = ev3.TouchSensor()
+        self.color_sensor = ev3.ColorSensor()
+        self.ir_sensor = ev3.InfraredSensor()
         self.MAX_SPEED = 900
         self.running = True
         assert self.left_motor.connected
         assert self.right_motor.connected
         assert self.arm_motor.connected
         assert self.touch_sensor.connected
+        assert self.color_sensor
+        assert self.ir_sensor
 
     def drive_inches(self, inches_target, speed_deg_per_second):
         """"Drives to a given relative position with a given speed"""
@@ -111,6 +115,7 @@ class Snatch3r(object):
         self.right_motor.run_forever(speed_sp=right_speed)
 
     def back(self, left_speed, right_speed):
+        """Turn Motors on to drive backwards"""
         self.left_motor.run_forever(speed_sp=-left_speed)
         self.right_motor.run_forever(speed_sp=-right_speed)
 
