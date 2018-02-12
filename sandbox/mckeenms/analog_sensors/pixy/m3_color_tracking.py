@@ -18,7 +18,7 @@ def main():
     print("--------------------------------------------")
     print(" Color tracking")
     print("--------------------------------------------")
-    ev3.Sound.speak("Color tracking").wait()
+    ev3.Sound.speak("I hate my parents").wait()
     print("Press the touch sensor to exit this program.")
 
     # This code assumes you have setup the pixy object on the Snatch3r class.
