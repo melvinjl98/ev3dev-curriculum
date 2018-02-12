@@ -161,3 +161,6 @@ class Snatch3r(object):
         print("Abandon ship!")
         self.stop_bot()
         return False
+    def pixy_cam(self):
+        self.pixy = ev3.Sensor(driver_name="pixy-lego")
+        assert self.pixy
