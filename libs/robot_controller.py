@@ -137,10 +137,11 @@ class Snatch3r(object):
                 print("IR Remote not found. Distance is -128")
                 self.drive(turn_speed, -turn_speed)
             else:
-                if math.fabs(current_heading) < 2:
+                if math.fabs(current_heading) < math.fabs(2):
                     print("On the right heading. Distance: ", current_distance)
                     if current_distance == 0:
                         self.stop_bot()
+                        self.drive_inches(2.75, forward_speed)
                         return True
                     else:
                         self.drive(forward_speed, forward_speed)
@@ -152,7 +153,7 @@ class Snatch3r(object):
                     else:
                         self.drive(turn_speed, -turn_speed)
 
-                elif math.fabs(current_heading) > 10:
+                else:
                     self.drive(turn_speed, -turn_speed)
 
             time.sleep(0.2)
