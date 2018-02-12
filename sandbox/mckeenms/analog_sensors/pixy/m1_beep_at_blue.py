@@ -27,10 +27,10 @@ def main():
     print("Press the touch sensor to exit this program.")
 
     robot = robo.Snatch3r()
-    robot.pixy.mode = "SIG2"
+    robot.pixy.mode = "SIG1"
 
     while not robot.touch_sensor.is_pressed:
-        # TODO: 2. Implement the module as described in the opening comment block.
+        # DONE: 2. Implement the module as described in the opening comment block.
         # It is recommended that you add to your Snatch3r class's constructor the pixy object, as shown
         #   self.pixy = ev3.Sensor(driver_name="pixy-lego")
         #   assert self.pixy
@@ -41,6 +41,7 @@ def main():
         print("Value 2: Y", robot.pixy.value(2))
         print("Value 3: Width", robot.pixy.value(3))
         print("Value 4: Height", robot.pixy.value(4))
+
         if width > 0:
             ev3.Sound.beep().wait(0.2)
 
