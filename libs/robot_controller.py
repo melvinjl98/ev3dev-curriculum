@@ -26,6 +26,7 @@ class Snatch3r(object):
         self.touch_sensor = ev3.TouchSensor()
         self.color_sensor = ev3.ColorSensor()
         self.ir_sensor = ev3.InfraredSensor()
+        self.pixy = ev3.Sensor(driver_name="pixy-lego")
         self.MAX_SPEED = 900
         self.running = True
         assert self.left_motor.connected
@@ -34,6 +35,7 @@ class Snatch3r(object):
         assert self.touch_sensor.connected
         assert self.color_sensor
         assert self.ir_sensor
+        assert self.pixy
 
     def drive_inches(self, inches_target, speed_deg_per_second):
         """"Drives to a given relative position with a given speed"""
@@ -161,6 +163,5 @@ class Snatch3r(object):
         print("Abandon ship!")
         self.stop_bot()
         return False
-    def pixy_cam(self):
-        self.pixy = ev3.Sensor(driver_name="pixy-lego")
-        assert self.pixy
+
+
