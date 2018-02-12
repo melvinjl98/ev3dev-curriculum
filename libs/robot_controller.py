@@ -164,9 +164,8 @@ class Snatch3r(object):
         self.stop_bot()
         return False
 
-    #melvinjl
+#   melvinjl
 
-    #mckeenms
+#   mckeenms
 
-    #makinewg
-
+#   makinewg
