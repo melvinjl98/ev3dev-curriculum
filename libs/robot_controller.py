@@ -165,7 +165,16 @@ class Snatch3r(object):
         self.stop_bot()
         return False
 
+
 #   melvinjl
+class Pokemon(object):
+    def __init__(self):
+        self.type=None
+        self.hp=0
+        self.attack=0
+        self.defense=0
+
+    #def battle(self, wild_pokemon):
 
 #   mckeenms
 
