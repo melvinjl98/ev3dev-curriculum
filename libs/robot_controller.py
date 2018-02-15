@@ -170,9 +170,9 @@ class Snatch3r(object):
 class Pokemon(object):
     def __init__(self):
         self.type=None
-        self.hp=0
-        self.attack=0
-        self.defense=0
+        self.hp=50
+        self.attack=37.5
+        self.defense=25
 
     def battle(self, wild_pokemon):
         ev3.Sound.play("/home/robot/csse120/projects/melvinjl/battle.wav")
