@@ -5,6 +5,7 @@ import time
 import robot_controller as robo
 import mqtt_remote_method_calls as com
 
+
 def main():
     robot = robo.Snatch3r()
     mqtt_client = com.MqttClient(robot)
