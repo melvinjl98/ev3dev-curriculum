@@ -6,17 +6,25 @@ import tkinter
 from tkinter import ttk
 
 import mqtt_remote_method_calls as com
-
+import robot_controller as robo
 
 def main():
     mqtt_client = com.MqttClient()
     mqtt_client.connect_to_ev3()
 
-    root = tkinter.Tk()
-    root.title("Pokemon Red: Remastered Edition")
+    start = tkinter.Tk()
+    start.title("                            Pokemon Red: Remastered Edition")
 
-    main_frame = ttk.Frame(root, padding=20, relief='raised')
+    main_frame = ttk.Frame(start, padding=0, relief='raised')
     main_frame.grid()
+
+    photo = tkinter.PhotoImage(file="red_start.gif")
+
+    button1 = ttk.Button(main_frame, image=photo)
+    button1.image = photo
+    button1.grid()
+    button1['command'] = lambda: start.destroy()
+    start.mainloop()
 
     walk_speed = 300
     run_speed = 600
@@ -64,22 +72,16 @@ def main():
     e_button.grid(row=6, column=2)
     e_button['command'] = (lambda: quit_program(mqtt_client, True))
 
-    root.mainloop()
-
     def forward_callback(mqtt_client, left_speed, right_speed):
-        print("drive")
         mqtt_client.send_message("drive", [left_speed, right_speed])
 
     def left_callback(mqtt_client, left_speed, right_speed):
-        print("turn left")
         mqtt_client.send_message("turn_left", [left_speed, right_speed])
 
     def stop_callback(mqtt_client):
-        print("stop")
         mqtt_client.send_message("stop_bot")
 
     def right_callback(mqtt_client, left_speed, right_speed):
-        print("turn right")
         mqtt_client.send_message("turn_right", [left_speed, right_speed])
 
     def back_callback(mqtt_client, left_speed, right_speed):
@@ -100,6 +102,25 @@ def main():
             mqtt_client.send_message("shutdown")
         mqtt_client.close()
         exit()
+
+
+Charmander=robo.Pokemon()
+Charmander.type="Fire"
+Charmander.hp=50
+Charmander.attack=37.5
+Charmander.defense=25
+Squirtle=robo.Pokemon()
+Squirtle.type="Water"
+Squirtle.hp=50
+Squirtle.attack=37.5
+Squirtle.defense=25
+Bulbasaur=robo.Pokemon()
+Bulbasaur.type="Grass"
+Bulbasaur.hp=50
+Bulbasaur.attack=37.5
+Bulbasaur.defense=25
+party = [Charmander,Squirtle, Bulbasaur]
+
 
 
 main()
