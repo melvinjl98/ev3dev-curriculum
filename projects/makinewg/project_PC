@@ -11,20 +11,22 @@ def main():
 
     mqtt_client = com.MqttClient()
     mqtt_client.connect_to_ev3()
+    mqtt_client1 = com.MqttClient()
+    mqtt_client1.connect_to_ev3()
 
     root = tkinter.Tk()
     root.title("MQTT Remote")
 
     main_frame = ttk.Frame(root, padding=20, relief='raised')
 
-    left_speed_label = ttk.Label(main_frame, text="Left")
-    left_speed_label.grid(row=1, column=0)
+    left_speed_label = ttk.Label(main_frame, text="Fire Station 120")
+    left_speed_label.grid(row=0, column=0)
     left_speed_entry = ttk.Entry(main_frame, width=8)
     left_speed_entry.insert(0, "600")
-    left_speed_entry.grid(row=2, column=0)
+    left_speed_entry.grid(row=3, column=0)
 
-    right_speed_label = ttk.Label(main_frame, text="Right")
-    right_speed_label.grid(row=3, column=0)
+    right_speed_label = ttk.Label(main_frame, text="Dispatch")
+    right_speed_label.grid(row=0, column=1)
     right_speed_entry = ttk.Entry(main_frame, width=8, justify=tkinter.LEFT)
     right_speed_entry.insert(0, "600")
     right_speed_entry.grid(row=4, column=0)
@@ -35,19 +37,19 @@ def main():
     root.bind('<Up>', lambda event: forward_callback(mqtt_client, left_speed_entry, right_speed_entry))
 
     fire_button = ttk.Button(main_frame, text="FIRE!")
-    fire_button.grid(row=0, column=0)
+    fire_button.grid(row=1, column=0)
     fire_button['command'] = lambda: fire_callback(mqtt_client, left_speed_entry, right_speed_entry)
     root.bind('<f>', lambda event: fire_callback(mqtt_client, left_speed_entry, right_speed_entry))
 
     crash_button = ttk.Button(main_frame, text="CRASH!")
-    crash_button.grid(row=0, column=1)
+    crash_button.grid(row=1, column=1)
     crash_button['command'] = lambda: crash_callback(mqtt_client, left_speed_entry, right_speed_entry)
     root.bind('<c>', lambda event: crash_callback(mqtt_client, left_speed_entry, right_speed_entry))
 
     firetruck_button = ttk.Button(main_frame, text="Code 3")
-    firetruck_button.grid(row=0, column=2)
-    firetruck_button['command'] = lambda: firetruck_callback(mqtt_client)
-    root.bind('<3>', lambda event: firetruck_callback(mqtt_client))
+    firetruck_button.grid(row=1, column=2)
+    firetruck_button['command'] = lambda: firetruck_callback(mqtt_client1)
+    root.bind('<3>', lambda event: firetruck_callback(mqtt_client1))
 
     left_button = ttk.Button(main_frame, text="Left")
     left_button['command'] = lambda: left_callback(mqtt_client, left_speed_entry, right_speed_entry)
@@ -73,13 +75,8 @@ def main():
     down_button['command'] = lambda: send_down(mqtt_client)
     root.bind('<j>', lambda event: send_down(mqtt_client))
 
-    # Buttons for quit and exit
-    q_button = ttk.Button(main_frame, text="Quit")
-    q_button.grid(row=2, column=2)
-    q_button['command'] = (lambda: quit_program(mqtt_client, False))
-
     e_button = ttk.Button(main_frame, text="Exit")
-    e_button.grid(row=3, column=2)
+    e_button.grid(row=4, column=2)
     e_button['command'] = (lambda: quit_program(mqtt_client, True))
 
     root.mainloop()
@@ -110,8 +107,8 @@ def back_callback(mqtt_client, left_speed, right_speed):
     mqtt_client.send_message("back", [int(left_speed.get()), int(right_speed.get())])
 
 
-def firetruck_callback(mqtt_client):
-    mqtt_client.send_message("firetruck")
+def firetruck_callback(mqtt_client1):
+    mqtt_client1.send_message("firetruck")
 
 
 def fire_callback(mqtt_client, left_speed, right_speed):

@@ -62,7 +62,7 @@ class Snatch3r(object):
             if self.touch_sensor.is_pressed:
                 break
         self.arm_motor.stop(stop_action="brake")
-        ev3.Sound.beep().wait()
+        # ev3.Sound.beep().wait()
 
         arm_revolutions_for_full_range = 14.2 * 360
         self.arm_motor.run_to_rel_pos(position_sp=-arm_revolutions_for_full_range, speed_sp=self.MAX_SPEED)
@@ -149,6 +149,14 @@ class Snatch3r(object):
                 break
             else:
                 self.drive(600, 600)
+                ev3.Leds.set_color(ev3.Leds.LEFT, ev3.Leds.RED)
+                ev3.Leds.set_color(ev3.Leds.RIGHT, ev3.Leds.YELLOW)
+                ev3.Leds.set_color(ev3.Leds.LEFT, ev3.Leds.YELLOW)
+                ev3.Leds.set_color(ev3.Leds.RIGHT, ev3.Leds.RED)
+                ev3.Leds.set_color(ev3.Leds.LEFT, ev3.Leds.RED)
+                ev3.Leds.set_color(ev3.Leds.RIGHT, ev3.Leds.YELLOW)
+                ev3.Leds.set_color(ev3.Leds.LEFT, ev3.Leds.YELLOW)
+                ev3.Leds.set_color(ev3.Leds.RIGHT, ev3.Leds.RED)
                 ev3.Leds.set_color(ev3.Leds.LEFT, ev3.Leds.RED)
                 ev3.Leds.set_color(ev3.Leds.RIGHT, ev3.Leds.YELLOW)
 
