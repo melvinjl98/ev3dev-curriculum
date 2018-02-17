@@ -127,6 +127,30 @@ class Snatch3r(object):
         self.left_motor.stop(stop_action="brake")
         self.right_motor.stop(stop_action="brake")
 
+    def follow_a_line(self):
+
+        while not self.touch_sensor.is_pressed:
+            if self.color_sensor.reflected_light_intensity < 80:
+                ev3.Sound.play("/home/robot/csse120/assets/sounds/horn.wav")
+                self.turn_degrees(-10, 400)
+                ev3.Leds.set_color(ev3.Leds.LEFT, ev3.Leds.YELLOW)
+                ev3.Leds.set_color(ev3.Leds.RIGHT, ev3.Leds.RED)
+            if self.color_sensor.reflected_light_intensity < 70 and self.color_sensor.reflected_light_intensity > 60:
+                ev3.Sound.play("/home/robot/csse120/assets/sounds/sirenatend.wav")
+                self.drive(0, 0)
+                self.arm_calibration()
+                ev3.Leds.set_color(ev3.Leds.LEFT, ev3.Leds.BLACK)
+                ev3.Leds.set_color(ev3.Leds.RIGHT, ev3.Leds.BLACK)
+                break
+            else:
+                ev3.Sound.play("/home/robot/csse120/assets/sounds/Siren.wav")
+                self.drive(600, 600)
+                ev3.Leds.set_color(ev3.Leds.LEFT, ev3.Leds.RED)
+                ev3.Leds.set_color(ev3.Leds.RIGHT, ev3.Leds.YELLOW)
+
+
+
+
     def seek_beacon(self):
         """Look for the IR beacon"""
         beacon_seeker = ev3.BeaconSeeker(channel=1)
