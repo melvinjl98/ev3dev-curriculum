@@ -7,9 +7,11 @@ from tkinter import ttk
 
 import mqtt_remote_method_calls as com
 
+
 class MyDelegate(object):
     def __init__(self):
         self.running=True
+
 
 class Pokemon(object):
     def __init__(self):
@@ -19,19 +21,26 @@ class Pokemon(object):
         self.defense=25
 
 
+class WindowsAndNumber(object):
+    def __init__(self):
+        self.number = None
+        self.label = None
+        self.windows = []
+
 def main():
 
     my_delegate = MyDelegate()
     mqtt_client = com.MqttClient(my_delegate)
     mqtt_client.connect_to_ev3()
 
-    start = tkinter.Tk()
-    start.title("                            Pokemon Red: Remastered Edition")
+    windows_and_number = WindowsAndNumber()
 
-    main_frame = ttk.Frame(start, padding=0, relief='raised')
-    main_frame.grid()
-    party_frame = ttk.Frame(start, padding=0, relief='raised')
+    root = tkinter.Tk()
+
+    party_frame = ttk.Frame(root, padding=0, relief='raised')
     party_frame.grid()
+
+    start_window(root, windows_and_number)
 
     photo = tkinter.PhotoImage(file="red_start.gif")
 
@@ -42,7 +51,6 @@ def main():
     start.mainloop()
 
     walk_speed = 300
-    run_speed = 600
 
     movement = tkinter.Tk()
     movement.bind('<Up>', lambda event: forward_callback(mqtt_client, walk_speed, walk_speed))
@@ -52,6 +60,14 @@ def main():
     movement.bind('<Down>', lambda event: back_callback(mqtt_client, walk_speed, walk_speed))
     movement.bind('<u>', lambda event: send_up(mqtt_client))
     movement.bind('<j>', lambda event: send_down(mqtt_client))
+
+    Charmander = Pokemon()
+    Charmander.type = "Fire"
+    Squirtle = Pokemon()
+    Squirtle.type = "Water"
+    Bulbasaur = Pokemon()
+    Bulbasaur.type = "Grass"
+    party = [Charmander, Squirtle, Bulbasaur]
 
     charmander = tkinter.PhotoImage(file="Charmander.gif")
     squirtle = tkinter.PhotoImage(file="Squirtle.gif")
@@ -116,14 +132,80 @@ def quit_program(mqtt_client, shutdown_ev3):
     mqtt_client.close()
     exit()
 
+def start_window(root, windows):
+    """ Puts Buttons on the main window. """
+    root.title("                            Pokemon Red: Remastered Edition")
 
-Charmander = Pokemon()
-Charmander.type = "Fire"
-Squirtle = Pokemon()
-Squirtle.type = "Water"
-Bulbasaur = Pokemon()
-Bulbasaur.type = "Grass"
-party = [Charmander, Squirtle, Bulbasaur]
+    start_frame = ttk.Frame(root, padding=0, relief='raised')
+    start_frame.grid()
+
+    press_start = ttk.Button(start_frame, image=tkinter.PhotoImage(file="red_start.gif"))
+    press_start.image = tkinter.PhotoImage(file="red_start.gif")
+    press_start.grid()
+    press_start['command'] = lambda: change_number(windows, 1)
+"""
+    destroy_button = ttk.Button(window1_frame,
+                                text='Destroy some windows')
+    destroy_button.grid()
+    destroy_button['command'] = lambda: destroy_windows(windows)
+"""
+
+def put_stuff_on_window2(windows_and_number):
+    """ Puts Buttons on a secondary window. """
+    root2 = tkinter.Toplevel()  # Note Toplevel, NOT Tk.
+
+    window2_frame = ttk.Frame(root2, padding=20)
+    window2_frame.grid()
+
+    decrease_button = ttk.Button(window2_frame,
+                                 text='Decrease the number')
+    decrease_button.grid()
+    decrease_button['command'] = lambda: change_number(windows_and_number, -1)
+
+    button_text = 'Pop up a new window with the number'
+    pop_up_button = ttk.Button(window2_frame, text=button_text)
+    pop_up_button.grid()
+    pop_up_button['command'] = lambda: pop_up(windows_and_number)
+
+
+def put_stuff_on_window3(windows_and_number):
+    """ Puts a Label on a secondary window. """
+    root3 = tkinter.Toplevel()  # Note Toplevel, NOT Tk.
+
+    window3_frame = ttk.Frame(root3, padding=20)
+    window3_frame.grid()
+
+    number_label = ttk.Label(window3_frame, text='The number is: 0')
+    number_label.grid()
+
+    windows_and_number.number = 0
+    windows_and_number.label = number_label
+
+
+def change_number(windows_and_number, delta):
+    """
+    Changes the number in the data by the given delta,
+    then displays the changed value in its Label.
+    """
+    windows_and_number.number = windows_and_number.number + delta
+    msg = 'The number is: {}'.format(windows_and_number.number)
+    windows_and_number.label['text'] = msg
+
+
+def pop_up(windows_and_number):
+    """ Pops up a window, with a Label that shows some info. """
+    window = tkinter.Toplevel()  # Note Toplevel, NOT Tk.
+    msg = 'The number is: \n {}'.format(windows_and_number.number)
+    label = ttk.Label(window, text=msg)
+    label.grid()
+
+    windows_and_number.windows.append(window)
+
+
+def destroy_windows(data):
+    """ Destroys all the windows stored in the given Data object. """
+    for k in range(len(data.windows)):
+        data.windows[k].destroy()
 
 
 main()
