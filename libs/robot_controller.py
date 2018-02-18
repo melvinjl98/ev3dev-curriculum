@@ -44,7 +44,7 @@ class Snatch3r(object):
         self.right_motor.run_to_rel_pos(speed_sp=speed_deg_per_second, position_sp=inches_target*90)
         self.left_motor.wait_while(ev3.Motor.STATE_RUNNING)
         self.right_motor.wait_while(ev3.Motor.STATE_RUNNING)
-        ev3.Sound.beep().wait()
+        # ev3.Sound.beep().wait()
 
     def turn_degrees(self, degrees_to_turn, turn_speed_sp):
         """turn a given degrees at a given speed"""
@@ -52,7 +52,7 @@ class Snatch3r(object):
         self.right_motor.run_to_rel_pos(speed_sp=turn_speed_sp, position_sp=degrees_to_turn*4.95)
         self.left_motor.wait_while(ev3.Motor.STATE_RUNNING)
         self.right_motor.wait_while(ev3.Motor.STATE_RUNNING)
-        ev3.Sound.beep().wait()
+        # ev3.Sound.beep().wait()
 
     def arm_calibration(self):
         """Calibrate the arm motor position"""
@@ -62,12 +62,12 @@ class Snatch3r(object):
             if self.touch_sensor.is_pressed:
                 break
         self.arm_motor.stop(stop_action="brake")
-        ev3.Sound.beep().wait()
+        # ev3.Sound.beep().wait()
 
         arm_revolutions_for_full_range = 14.2 * 360
         self.arm_motor.run_to_rel_pos(position_sp=-arm_revolutions_for_full_range, speed_sp=self.MAX_SPEED)
         self.arm_motor.wait_while(ev3.Motor.STATE_RUNNING)
-        ev3.Sound.beep().wait()
+        # ev3.Sound.beep().wait()
         self.arm_motor.position = 0
 
     def arm_up(self):
@@ -78,13 +78,13 @@ class Snatch3r(object):
             if self.touch_sensor.is_pressed:
                 break
         self.arm_motor.stop(stop_action="brake")
-        ev3.Sound.beep().wait()
+        # ev3.Sound.beep().wait()
 
     def arm_down(self):
         """Move the arm down"""
         self.arm_motor.run_to_abs_pos(position_sp=0, speed_sp=self.MAX_SPEED)
         self.arm_motor.wait_while(ev3.Motor.STATE_RUNNING)  # Blocks until the motor finishes running
-        ev3.Sound.beep().wait()
+        # ev3.Sound.beep().wait()
 
     def shutdown(self):
         """Turn off all motors turn LEDs green, and stop all other code"""
@@ -95,7 +95,7 @@ class Snatch3r(object):
         ev3.Leds.set_color(ev3.Leds.LEFT, ev3.Leds.GREEN)
         ev3.Leds.set_color(ev3.Leds.RIGHT, ev3.Leds.GREEN)
         print('Goodbye')
-        ev3.Sound.speak('Goodbye').wait()
+        ev3.Sound.play("/home/robot/csse120/assets/sounds/awesome_pcm.wav").wait()
 
     def loop_forever(self):
         """Creates a never ending loop"""
@@ -126,6 +126,61 @@ class Snatch3r(object):
         """Stops both motors"""
         self.left_motor.stop(stop_action="brake")
         self.right_motor.stop(stop_action="brake")
+
+    def firetruck(self):
+
+        while not self.touch_sensor.is_pressed:
+            ev3.Sound.play("/home/robot/csse120/assets/sounds/Siren.wav").wait()
+            ev3.Sound.play("/home/robot/csse120/assets/sounds/horn.wav").wait()
+            ev3.Sound.play("/home/robot/csse120/assets/sounds/Siren.wav").wait()
+
+    def follow_a_line(self):
+
+        while not self.touch_sensor.is_pressed:
+            if self.color_sensor.reflected_light_intensity < 80:
+                self.turn_degrees(-10, 400)
+                ev3.Leds.set_color(ev3.Leds.LEFT, ev3.Leds.YELLOW)
+                ev3.Leds.set_color(ev3.Leds.RIGHT, ev3.Leds.RED)
+            if self.color_sensor.reflected_light_intensity < 70 and self.color_sensor.reflected_light_intensity > 60:
+                self.drive(0, 0)
+                self.arm_calibration()
+                ev3.Leds.set_color(ev3.Leds.LEFT, ev3.Leds.BLACK)
+                ev3.Leds.set_color(ev3.Leds.RIGHT, ev3.Leds.BLACK)
+                break
+            else:
+                self.drive(600, 600)
+                ev3.Leds.set_color(ev3.Leds.LEFT, ev3.Leds.RED)
+                ev3.Leds.set_color(ev3.Leds.RIGHT, ev3.Leds.YELLOW)
+                ev3.Leds.set_color(ev3.Leds.LEFT, ev3.Leds.YELLOW)
+                ev3.Leds.set_color(ev3.Leds.RIGHT, ev3.Leds.RED)
+                ev3.Leds.set_color(ev3.Leds.LEFT, ev3.Leds.RED)
+                ev3.Leds.set_color(ev3.Leds.RIGHT, ev3.Leds.YELLOW)
+                ev3.Leds.set_color(ev3.Leds.LEFT, ev3.Leds.YELLOW)
+                ev3.Leds.set_color(ev3.Leds.RIGHT, ev3.Leds.RED)
+                ev3.Leds.set_color(ev3.Leds.LEFT, ev3.Leds.RED)
+                ev3.Leds.set_color(ev3.Leds.RIGHT, ev3.Leds.YELLOW)
+
+    def follow_the_line(self):
+
+        while not self.touch_sensor.is_pressed:
+            if self.color_sensor.reflected_light_intensity < 80:
+                self.turn_degrees(-10, 400)
+                ev3.Leds.set_color(ev3.Leds.LEFT, ev3.Leds.YELLOW)
+                ev3.Leds.set_color(ev3.Leds.RIGHT, ev3.Leds.RED)
+            if self.color_sensor.reflected_light_intensity < 70 and self.color_sensor.reflected_light_intensity > 60:
+                self.drive(0, 0)
+                self.arm_up()
+                time.sleep(2)
+                self.arm_down()
+                ev3.Leds.set_color(ev3.Leds.LEFT, ev3.Leds.BLACK)
+                ev3.Leds.set_color(ev3.Leds.RIGHT, ev3.Leds.BLACK)
+                break
+            else:
+                self.drive(600, 600)
+                ev3.Leds.set_color(ev3.Leds.LEFT, ev3.Leds.RED)
+                ev3.Leds.set_color(ev3.Leds.RIGHT, ev3.Leds.YELLOW)
+
+        self.seek_beacon()
 
     def seek_beacon(self):
         """Look for the IR beacon"""
