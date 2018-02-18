@@ -126,4 +126,4 @@ class Pokemon(object):
 
     def battle(self, wild_pokemon):
         ev3.Sound.play("/home/robot/csse120/projects/melvinjl/battle.wav")
-        if 
+        if

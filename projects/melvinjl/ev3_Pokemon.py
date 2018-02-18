@@ -12,12 +12,10 @@ def main():
     mqtt_client = com.MqttClient(robot)
     mqtt_client.connect_to_pc()
 
-    #grass =
-    #water =
+    if robot.color_sensor.color == ev3.ColorSensor.COLOR_GREEN:
 
-    #if robot.color_sensor.reflected_light_intensity = grass:
+    if robot.color_sensor.color == ev3.ColorSensor.COLOR_BLUE:
 
-    #elif robot.color_sensor.reflected_light_intensity = water:
 
     robot.loop_forever()
 
