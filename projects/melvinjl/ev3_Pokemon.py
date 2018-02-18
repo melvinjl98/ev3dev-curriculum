@@ -13,9 +13,9 @@ def main():
     mqtt_client.connect_to_pc()
 
     if robot.color_sensor.color == ev3.ColorSensor.COLOR_GREEN:
-
+        mqtt_client.send_message("Grass_Walk")
     if robot.color_sensor.color == ev3.ColorSensor.COLOR_BLUE:
-
+        mqtt_client.send_message("Surf")
 
     robot.loop_forever()
 

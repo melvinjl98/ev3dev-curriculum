@@ -11,6 +11,12 @@ class MyDelegate(object):
     def __init__(self):
         self.running=True
 
+class Pokemon(object):
+    def __init__(self):
+        self.type=None
+        self.hp=50
+        self.attack=37.5
+        self.defense=25
 
 
 def main():
@@ -47,6 +53,22 @@ def main():
     movement.bind('<u>', lambda event: send_up(mqtt_client))
     movement.bind('<j>', lambda event: send_down(mqtt_client))
 
+    charmander = tkinter.PhotoImage(file="Charmander.gif")
+    squirtle = tkinter.PhotoImage(file="Squirtle.gif")
+    bulbasaur = tkinter.PhotoImage(file="Bulbasaur.gif")
+
+    Charmander = ttk.Button(party_frame, image=charmander)
+    Charmander.image = charmander
+    Charmander.grid(row=0, column=0)
+
+    Squirtle = ttk.Button(party_frame, image=squirtle)
+    Squirtle.image = squirtle
+    Squirtle.grid(row=0, column=1)
+
+    Bulbasaur = ttk.Button(party_frame, image=bulbasaur)
+    Bulbasaur.image = bulbasaur
+    Bulbasaur.grid(row=1, column=0)
+
     q_button = ttk.Button(main_frame, text="Quit")
     q_button.grid(row=4, column=2)
     q_button['command'] = (lambda: quit_program(mqtt_client, False))
@@ -55,29 +77,37 @@ def main():
     e_button.grid(row=5, column=2)
     e_button['command'] = (lambda: quit_program(mqtt_client, True))
 
+
 def forward_callback(mqtt_client, left_speed, right_speed):
     mqtt_client.send_message("drive", [left_speed, right_speed])
+
 
 def left_callback(mqtt_client, left_speed, right_speed):
     mqtt_client.send_message("turn_left", [left_speed, right_speed])
 
+
 def stop_callback(mqtt_client):
     mqtt_client.send_message("stop_bot")
 
+
 def right_callback(mqtt_client, left_speed, right_speed):
     mqtt_client.send_message("turn_right", [left_speed, right_speed])
+
 
 def back_callback(mqtt_client, left_speed, right_speed):
     print("back up")
     mqtt_client.send_message("back", [left_speed, right_speed])
 
+
 def send_up(mqtt_client):
     print("arm_up")
     mqtt_client.send_message("arm_up")
 
+
 def send_down(mqtt_client):
     print("arm_down")
     mqtt_client.send_message("arm_down")
+
 
 def quit_program(mqtt_client, shutdown_ev3):
     if shutdown_ev3:
@@ -86,44 +116,15 @@ def quit_program(mqtt_client, shutdown_ev3):
     mqtt_client.close()
     exit()
 
-"""
-Charmander = robo.Pokemon()
+
+Charmander = Pokemon()
 Charmander.type = "Fire"
-Squirtle = robo.Pokemon()
+Squirtle = Pokemon()
 Squirtle.type = "Water"
-Bulbasaur = robo.Pokemon()
+Bulbasaur = Pokemon()
 Bulbasaur.type = "Grass"
 party = [Charmander, Squirtle, Bulbasaur]
-"""
+
 
 main()
 
-charmander = tkinter.PhotoImage(file="Charmander.gif")
-squirtle = tkinter.PhotoImage(file="Squirtle.gif")
-bulbasaur = tkinter.PhotoImage(file="Bulbasaur.gif")
-
-Charmander = ttk.Button(party_frame, image=charmander)
-Charmander.image = charmander
-Charmander.grid(row=0, column=0)
-Charmander['command'] = lambda: start.destroy()
-
-Squirtle = ttk.Button(party_frame, image=squirtle)
-Squirtle.image = squirtle
-Squirtle.grid(row=0, column=1)
-Squirtle['command'] = lambda: start.destroy()
-
-Bulbasaur = ttk.Button(party_frame, image=bulbasaur)
-Bulbasaur.image = bulbasaur
-Bulbasaur.grid(row=1, column=0)
-Bulbasaur['command'] = lambda: start.destroy()
-
-class Pokemon(object):
-    def __init__(self):
-        self.type=None
-        self.hp=50
-        self.attack=37.5
-        self.defense=25
-
-    def battle(self, wild_pokemon):
-        ev3.Sound.play("/home/robot/csse120/projects/melvinjl/battle.wav")
-        if
