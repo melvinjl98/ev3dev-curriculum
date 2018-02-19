@@ -3,10 +3,14 @@
     CSSE 120 Final Project
     Pokemon Red: Remastered Edition
     My project is recreation of the classic Gameboy Color game, Pokemon Red.
-
+    The robot is controlled via keyboard and can drive in all directions as
+    well as have its arm move up and down. The pc side of the code handles
+    the Tkinter windows and when the robot's color sensor detects green it
+    sends a message to the pc to run a battle function to have your Pokemon
+    battle a wild Pokemon. Detecting blue will do a similar thing except the
+    code will prompt the user if they want to proceed first.
 """
 import time
-import random
 
 import tkinter
 from tkinter import ttk
@@ -33,6 +37,7 @@ class WindowsAndNumber(object):
         self.label = None
         self.windows = []
 
+
 def main():
 
     my_delegate = MyDelegate()
@@ -42,13 +47,12 @@ def main():
     windows_and_number = WindowsAndNumber()
 
     root = tkinter.Tk()
+    root.title("                            Pokemon Red: Remastered Edition")
 
-    party_frame = ttk.Frame(root, padding=0, relief='raised')
-    party_frame.grid()
     walk_speed = 300
-    start_window(root, windows_and_number)
 
-    movement(mqtt_client, windows_and_number, walk_speed)
+    start_window(root, windows_and_number)
+    movement(mqtt_client, walk_speed)
     party_window(mqtt_client, windows_and_number)
 
     Charmander = Pokemon()
@@ -57,70 +61,30 @@ def main():
     Squirtle.type = "Water"
     Bulbasaur = Pokemon()
     Bulbasaur.type = "Grass"
-    party = [Charmander, Squirtle, Bulbasaur]
+
+    root.mainloop()
 
 
-def forward_callback(mqtt_client, left_speed, right_speed):
-    mqtt_client.send_message("drive", [left_speed, right_speed])
-
-
-def left_callback(mqtt_client, left_speed, right_speed):
-    mqtt_client.send_message("turn_left", [left_speed, right_speed])
-
-
-def stop_callback(mqtt_client):
-    mqtt_client.send_message("stop_bot")
-
-
-def right_callback(mqtt_client, left_speed, right_speed):
-    mqtt_client.send_message("turn_right", [left_speed, right_speed])
-
-
-def back_callback(mqtt_client, left_speed, right_speed):
-    print("back up")
-    mqtt_client.send_message("back", [left_speed, right_speed])
-
-
-def send_up(mqtt_client):
-    print("arm_up")
-    mqtt_client.send_message("arm_up")
-
-
-def send_down(mqtt_client):
-    print("arm_down")
-    mqtt_client.send_message("arm_down")
-
-
-def quit_program(mqtt_client, shutdown_ev3):
-    if shutdown_ev3:
-        print("shutdown")
-        mqtt_client.send_message("shutdown")
-    mqtt_client.close()
-    exit()
-
-
-def start_window(root, windows):
+def start_window(root, windows_and_number):
     """ Puts Buttons on the main window. """
-    root.title("                            Pokemon Red: Remastered Edition")
-
-    start_frame = ttk.Frame(root, padding=0, relief='raised')
+    start_frame = ttk.Frame(root, padding=0)
     start_frame.grid()
 
     press_start = ttk.Button(start_frame, image=tkinter.PhotoImage(file="red_start.gif"))
     press_start.image = tkinter.PhotoImage(file="red_start.gif")
     press_start.grid()
-    press_start['command'] = lambda: change_number(windows, 1)
-
+    windows_and_number.windows.append(start_window)
+    press_start['command'] = lambda: start_game(windows_and_number)
 
 """
     destroy_button = ttk.Button(window1_frame,
                                 text='Destroy some windows')
     destroy_button.grid()
-    destroy_button['command'] = lambda: destroy_windows(windows)
+    destroy_button['command'] = lambda: start_game(windows)
 """
 
 
-def movement(mqtt_client, windows_and_number, walk_speed):
+def movement(mqtt_client, walk_speed):
     """Creates an invisible window that binds robot movement to keyboard controls."""
     movement_win = tkinter.Toplevel()
 
@@ -140,21 +104,24 @@ def party_window(mqtt_client, windows_and_number):
     party_frame = ttk.Frame(party, padding=20)
     party_frame.grid()
 
-    charmander = tkinter.PhotoImage(file="Charmander.gif")
-    squirtle = tkinter.PhotoImage(file="Squirtle.gif")
-    bulbasaur = tkinter.PhotoImage(file="Bulbasaur.gif")
+    charmander_i = tkinter.PhotoImage(file="Charmander.gif")
+    squirtle_i = tkinter.PhotoImage(file="Squirtle.gif")
+    bulbasaur_i = tkinter.PhotoImage(file="Bulbasaur.gif")
 
-    Charmander = ttk.Button(party_frame, image=charmander)
-    Charmander.image = charmander
-    Charmander.grid(row=0, column=0)
+    charmander = ttk.Button(party_frame, image=charmander_i)
+    charmander.image = charmander_i
+    charmander.grid(row=0, column=0)
+    charmander['command'] = (lambda: set_current_pokemon(mqtt_client, False))
 
-    Squirtle = ttk.Button(party_frame, image=squirtle)
-    Squirtle.image = squirtle
-    Squirtle.grid(row=0, column=1)
+    squirtle = ttk.Button(party_frame, image=squirtle_i)
+    squirtle.image = squirtle_i
+    squirtle.grid(row=0, column=1)
+    squirtle['command'] = (lambda: set_current_pokemon(mqtt_client, False))
 
-    Bulbasaur = ttk.Button(party_frame, image=bulbasaur)
-    Bulbasaur.image = bulbasaur
-    Bulbasaur.grid(row=1, column=0)
+    bulbasaur = ttk.Button(party_frame, image=bulbasaur_i)
+    bulbasaur.image = bulbasaur_i
+    bulbasaur.grid(row=1, column=0)
+    bulbasaur['command'] = (lambda: set_current_pokemon(mqtt_client, False))
 
     q_button = ttk.Button(party_frame, text="Quit")
     q_button.grid(row=4, column=2)
@@ -182,13 +149,54 @@ def pop_up(windows_and_number):
     label = ttk.Label(window, text=msg)
     label.grid()
 
-    windows_and_number.windows.append(window)
 
-
-def destroy_windows(data):
+def start_game(data):
     """ Destroys all the windows stored in the given Data object. """
     for k in range(len(data.windows)):
         data.windows[k].destroy()
 
+
+def forward_callback(mqtt_client, left_speed, right_speed):
+    mqtt_client.send_message("drive", [left_speed, right_speed])
+
+
+def left_callback(mqtt_client, left_speed, right_speed):
+    mqtt_client.send_message("turn_left", [left_speed, right_speed])
+
+
+def stop_callback(mqtt_client):
+    mqtt_client.send_message("stop_bot")
+
+
+def right_callback(mqtt_client, left_speed, right_speed):
+    mqtt_client.send_message("turn_right", [left_speed, right_speed])
+
+
+def back_callback(mqtt_client, left_speed, right_speed):
+    mqtt_client.send_message("back", [left_speed, right_speed])
+
+
+def send_up(mqtt_client):
+    mqtt_client.send_message("arm_up")
+
+
+def send_down(mqtt_client):
+    mqtt_client.send_message("arm_down")
+
+
+def quit_program(mqtt_client, shutdown_ev3):
+    if shutdown_ev3:
+        print("shutdown")
+        mqtt_client.send_message("shutdown")
+    mqtt_client.close()
+    exit()
+
+
+"""
+def Grass_Walk():
+    
+
+def Surf():
+"""
 
 main()
