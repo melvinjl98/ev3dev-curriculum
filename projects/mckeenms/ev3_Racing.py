@@ -10,36 +10,28 @@ import robot_controller as robo
 
 import mqtt_remote_method_calls as mqtt
 
-lap = 0
+def main():
+    while not robot.touch_sensor.is_pressed:
+        robot = robo.Snatch3r()
+        mqtt_client = mqtt.MqttClient(robot)
+        mqtt_client.connect_to_pc()
 
-def main(lap):
-    robot = robo.Snatch3r()
-    mqtt_client = mqtt.MqttClient(robot)
-    mqtt_client.connect_to_pc()
+        #finish_line = 17
+        boost = 13
+        oil = 11
 
-    finish_line = 17
-    boost = 13
-    oil = 11
+        if robot.color_sensor.reflected_light_intensity == boost:
+            if boost < 3:
+                print('Gained Boost')
+                boost = boost + 1
 
-    if robot.color_sensor.reflected_light_intensity == finish_line:
-        lap = lap + 1
-        if lap == 3:
-            lap = 0
-            print('Finish')
-            ev3.Sound.speak('Crossing the finish!').wait()
-        else:
-            print('Lap Number', lap)
+        if robot.color_sensor.reflected_light_intensity == oil:
+            robot.drive_inches(2, 400)
+            robot.turn_degrees(720, 400)
+            robot.drive_inches(-3, 400)
 
-    if robot.color_sensor.reflected_light_intensity == boost:
-        if boost < 3:
-            print('Gained Boost')
-            boost = boost + 1
+    ev3.Sound.speak("Ending").wait()
+    print('Pressed')
 
-    if robot.color_sensor.reflected_light_intensity == oil:
-        robot.drive_inches(2, 400)
-        robot.turn_degrees(540, 400)
-        robot.drive_inches(-3, 400)
-
-    robot.loop_forever()
 
 main()
