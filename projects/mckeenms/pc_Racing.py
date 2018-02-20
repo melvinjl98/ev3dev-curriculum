@@ -21,13 +21,14 @@ def main():
     mqtt_client.connect_to_ev3()
 
     root = tkinter.Tk()
-    title = 'Super Fast Vroom Cars'
+    root.title = 'Super Fast Vroom Cars'
 
     normal_speed = 400
 
     gui(root)
     driving(root, mqtt_client, normal_speed)
 
+    root.mainloop()
 
 def driving(root, mqtt_client, current_speed):
     root.bind('<Up>', lambda event: forward_callback(mqtt_client, current_speed, current_speed))
