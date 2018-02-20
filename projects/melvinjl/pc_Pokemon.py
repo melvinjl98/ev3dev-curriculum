@@ -178,6 +178,8 @@ def quit_program(mqtt_client, shutdown_ev3):
 
 
 def grass_walk(current_pokemon):
+    """Robot is searching grass Pokemon"""
+    print("You have entered tall grass.")
     gloom = Pokemon()
     gloom.type = "Grass"
     time.sleep(5)
@@ -185,6 +187,8 @@ def grass_walk(current_pokemon):
 
 
 def surf(current_pokemon):
+    """Robot is searching for water Pokemon"""
+    print("Squirtle use Surf.")
     magikarp = Pokemon()
     magikarp.type = "Water"
     time.sleep(5)
@@ -192,6 +196,7 @@ def surf(current_pokemon):
 
 
 def battle(current_pokemon, wild_pokemon):
+    """Your currently selected pokemon battles against the wild Pokemon."""
     if current_pokemon.type == "Fire" and wild_pokemon.type == "Grass":
         current_pokemon.hp = current_pokemon.hp + current_pokemon.defense - wild_pokemon.attack
         wild_pokemon.hp = wild_pokemon.hp + wild_pokemon.defense - (2 * current_pokemon.attack)
