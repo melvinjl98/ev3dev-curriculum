@@ -46,7 +46,6 @@ class Snatch3r(object):
         self.right_motor.wait_while(ev3.Motor.STATE_RUNNING)
         # ev3.Sound.beep().wait()
 
-
     def turn_degrees(self, degrees_to_turn, turn_speed_sp):
         """turn a given degrees at a given speed"""
         self.left_motor.run_to_rel_pos(speed_sp=turn_speed_sp, position_sp=-degrees_to_turn*4.95)
@@ -130,14 +129,14 @@ class Snatch3r(object):
 
     def boost(self, left_speed, right_speed):
         """Doubles speed for 5 seconds"""
-        self.left_motor.run_forever(speed_sp = 2 * left_speed)
-        self.right_motor.run_forever(speed_sp = 2 *right_speed)
+        self.left_motor.run_forever(speed_sp=2 * left_speed)
+        self.right_motor.run_forever(speed_sp=2 * right_speed)
 
         self.left_motor.wait(5000)
         self.right_motor.wait(5000)
 
-        self.left_motor.run_forever(speed_sp = left_speed)
-        self.right_motor.run_forever(speed_sp = right_speed)
+        self.left_motor.run_forever(speed_sp=left_speed)
+        self.right_motor.run_forever(speed_sp=right_speed)
 
     def firetruck(self):
 
@@ -265,7 +264,8 @@ class Snatch3r(object):
                             ev3.Sound.play("/home/robot/csse120/projects/melvinjl/recovery.wav")
                             print("Thank you! Your Pokemon are fighting fit! We hope to see you again!")
                             self.arm_down()
-                            break
+                            hp = 50
+                            return hp
                     else:
                         self.drive(forward_speed, forward_speed)
                 elif math.fabs(current_heading) < 10:

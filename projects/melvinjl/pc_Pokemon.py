@@ -39,6 +39,8 @@ def main():
     root = tkinter.Tk()
     root.title("                            Pokemon Red: Remastered Edition")
 
+    party = tkinter.Toplevel()
+
     walk_speed = 500
 
     charmander = Pokemon()
@@ -48,16 +50,17 @@ def main():
     bulbasaur = Pokemon()
     bulbasaur.type = "Grass"
 
-    current_pokemon = charmander
+    current_pokemon = bulbasaur
 
     start_window(root)
-    movement(root, mqtt_client, walk_speed)
-    party_window(mqtt_client, charmander, squirtle, bulbasaur, current_pokemon)
+    movement(party, mqtt_client, walk_speed)
+    party_window(party, mqtt_client, charmander, squirtle, bulbasaur, current_pokemon)
 
     root.mainloop()
 
 
 def start_window(root):
+    """Creates a window for the start scen image"""
     start_frame = ttk.Frame(root, padding=0)
     start_frame.grid()
 
@@ -68,21 +71,20 @@ def start_window(root):
     press_start.grid()
 
 
-def movement(root, mqtt_client, walk_speed):
-    """Creates an invisible window that binds robot movement to keyboard controls."""
+def movement(party, mqtt_client, walk_speed):
+    """Attaches movement controls to ."""
 
-    root.bind('<Up>', lambda event: forward_callback(mqtt_client, walk_speed, walk_speed))
-    root.bind('<Down>', lambda event: back_callback(mqtt_client, walk_speed, walk_speed))
-    root.bind('<Left>', lambda event: left_callback(mqtt_client, walk_speed, walk_speed))
-    root.bind('<Right>', lambda event: right_callback(mqtt_client, walk_speed, walk_speed))
-    root.bind('<space>', lambda event: stop_callback(mqtt_client))
-    root.bind('<u>', lambda event: send_up(mqtt_client))
-    root.bind('<j>', lambda event: send_down(mqtt_client))
+    party.bind('<Up>', lambda event: forward_callback(mqtt_client, walk_speed, walk_speed))
+    party.bind('<Down>', lambda event: back_callback(mqtt_client, walk_speed, walk_speed))
+    party.bind('<Left>', lambda event: left_callback(mqtt_client, walk_speed, walk_speed))
+    party.bind('<Right>', lambda event: right_callback(mqtt_client, walk_speed, walk_speed))
+    party.bind('<space>', lambda event: stop_callback(mqtt_client))
+    party.bind('<u>', lambda event: send_up(mqtt_client))
+    party.bind('<j>', lambda event: send_down(mqtt_client))
 
 
-def party_window(mqtt_client, charmander, squirtle, bulbasaur, current_pokemon):
+def party_window(party, mqtt_client, charmander, squirtle, bulbasaur, current_pokemon):
     """Create a window that displays your Pokemon party."""
-    party = tkinter.Toplevel()
 
     party_frame = ttk.Frame(party, padding=10)
     party_frame.grid()
@@ -106,9 +108,12 @@ def party_window(mqtt_client, charmander, squirtle, bulbasaur, current_pokemon):
     bulbasaur_b.grid(row=1, column=0)
     bulbasaur_b['command'] = (lambda: set_current_pokemon(bulbasaur, "Bulbasaur"))
 
+    hp = 0
+
     heal_button = ttk.Button(party_frame, text="Heal")
     heal_button.grid(row=4, column=0)
     heal_button['command'] = (lambda: poke_center(mqtt_client))
+
 
     grass_button = ttk.Button(party_frame, text="Search Grass")
     grass_button.grid(row=4, column=1)
@@ -199,33 +204,39 @@ def battle(current_pokemon, wild_pokemon):
     """Your currently selected pokemon battles against the wild Pokemon."""
     if current_pokemon.type == "Fire" and wild_pokemon.type == "Grass":
         current_pokemon.hp = current_pokemon.hp + current_pokemon.defense - wild_pokemon.attack
-        wild_pokemon.hp = wild_pokemon.hp + wild_pokemon.defense - (2 * current_pokemon.attack)
+        wild_pokemon.hp = wild_pokemon.hp + wild_pokemon.defense - (current_pokemon.attack * 2)
+        print(wild_pokemon.hp, current_pokemon.hp)
 
     if current_pokemon.type == "Fire" and wild_pokemon.type == "Water":
         wild_pokemon.hp = wild_pokemon.hp + wild_pokemon.defense - (.5 * current_pokemon.attack)
         current_pokemon.hp = current_pokemon.hp + current_pokemon.defense - (2 * wild_pokemon.attack)
+        print(wild_pokemon.hp, current_pokemon.hp)
 
     if current_pokemon.type == "Water" and wild_pokemon.type == "Grass":
         current_pokemon.hp = current_pokemon.hp + current_pokemon.defense - (2 * wild_pokemon.attack)
         wild_pokemon.hp = wild_pokemon.hp + wild_pokemon.defense - current_pokemon.attack
+        print(wild_pokemon.hp, current_pokemon.hp)
 
     if current_pokemon.type == "Water" and wild_pokemon.type == "Water":
         wild_pokemon.hp = wild_pokemon.hp + wild_pokemon.defense - current_pokemon.attack
         current_pokemon.hp = current_pokemon.hp + current_pokemon.defense - wild_pokemon.attack
+        print(wild_pokemon.hp, current_pokemon.hp)
 
     if current_pokemon.type == "Grass" and wild_pokemon.type == "Grass":
         current_pokemon.hp = current_pokemon.hp + current_pokemon.defense - wild_pokemon.attack
         wild_pokemon.hp = wild_pokemon.hp + wild_pokemon.defense - current_pokemon.attack
+        print(wild_pokemon.hp, current_pokemon.hp)
 
     if current_pokemon.type == "Grass" and wild_pokemon.type == "Water":
         wild_pokemon.hp = wild_pokemon.hp + wild_pokemon.defense - (2 * current_pokemon.attack)
         current_pokemon.hp = current_pokemon.hp + current_pokemon.defense - wild_pokemon.attack
+        print(wild_pokemon.hp, current_pokemon.hp)
 
     if current_pokemon.hp == 0:
         print("Trainer whited out.")
         return
 
-    elif wild_pokemon == 0:
+    elif wild_pokemon.hp == 0:
         print("You are victorious.")
         return
 
@@ -234,9 +245,13 @@ def battle(current_pokemon, wild_pokemon):
         return
 
 
-def poke_center(mqtt_client):
+def poke_center(mqtt_client, charmander, squirtle, bulbasaur):
     """send message to robot to look for the PokeCenter beacon"""
+    hp = 0
     mqtt_client.send_message("seek_beacon_pokemon")
+    charmander.hp = hp
+    bulbasaur.hp = hp
+    squirtle.hp = hp
 
 
 main()
