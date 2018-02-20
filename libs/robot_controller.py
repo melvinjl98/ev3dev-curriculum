@@ -141,7 +141,7 @@ class Snatch3r(object):
                 self.turn_degrees(-10, 400)
                 ev3.Leds.set_color(ev3.Leds.LEFT, ev3.Leds.YELLOW)
                 ev3.Leds.set_color(ev3.Leds.RIGHT, ev3.Leds.RED)
-            if self.color_sensor.reflected_light_intensity < 70 and self.color_sensor.reflected_light_intensity > 60:
+            if self.color_sensor.reflected_light_intensity < 70 & self.color_sensor.reflected_light_intensity > 60:
                 self.drive(0, 0)
                 self.arm_calibration()
                 ev3.Leds.set_color(ev3.Leds.LEFT, ev3.Leds.BLACK)
@@ -167,7 +167,7 @@ class Snatch3r(object):
                 self.turn_degrees(-10, 400)
                 ev3.Leds.set_color(ev3.Leds.LEFT, ev3.Leds.YELLOW)
                 ev3.Leds.set_color(ev3.Leds.RIGHT, ev3.Leds.RED)
-            if self.color_sensor.reflected_light_intensity < 70 and self.color_sensor.reflected_light_intensity > 60:
+            if self.color_sensor.reflected_light_intensity < 70 & self.color_sensor.reflected_light_intensity > 60:
                 self.drive(0, 0)
                 self.arm_up()
                 time.sleep(2)
@@ -222,6 +222,13 @@ class Snatch3r(object):
 
 
 #   melvinjl
+    def play_music(self, music_number):
+        if music_number == 1:
+            ev3.Sound.play("/home/robot/csse120/projects/melvinjl/opening.wav")
+        if music_number == 2:
+            ev3.Sound.play("/home/robot/csse120/projects/melvinjl/battle.wav")
+        if music_number == 3:
+            ev3.Sound.play("/home/robot/csse120/projects/melvinjl/champion.wav")
 
 #   mckeenms
 

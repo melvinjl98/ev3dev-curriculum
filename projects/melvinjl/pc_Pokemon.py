@@ -31,36 +31,20 @@ class Pokemon(object):
         self.defense=25
 
 
-class WindowsAndNumber(object):
-    def __init__(self):
-        self.number = None
-        self.label = None
-        self.windows = []
-
-
 def main():
 
     my_delegate = MyDelegate()
     mqtt_client = com.MqttClient(my_delegate)
     mqtt_client.connect_to_ev3()
 
-    windows_and_number = WindowsAndNumber()
-
     root = tkinter.Tk()
     root.title("                            Pokemon Red: Remastered Edition")
 
     walk_speed = 300
 
-    start_window(root, windows_and_number)
+    start_window(root)
     movement(mqtt_client, walk_speed)
-    party_window(mqtt_client, windows_and_number)
-
-    Charmander = Pokemon()
-    Charmander.type = "Fire"
-    Squirtle = Pokemon()
-    Squirtle.type = "Water"
-    Bulbasaur = Pokemon()
-    Bulbasaur.type = "Grass"
+    party_window(mqtt_client)
 
     root.mainloop()
 
@@ -73,7 +57,6 @@ def start_window(root, windows_and_number):
     press_start = ttk.Button(start_frame, image=tkinter.PhotoImage(file="red_start.gif"))
     press_start.image = tkinter.PhotoImage(file="red_start.gif")
     press_start.grid()
-    windows_and_number.windows.append(start_window)
     press_start['command'] = lambda: start_game(windows_and_number)
 
 """
@@ -104,6 +87,14 @@ def party_window(mqtt_client, windows_and_number):
     party_frame = ttk.Frame(party, padding=20)
     party_frame.grid()
 
+    Charmander = Pokemon()
+    Charmander.type = "Fire"
+    Squirtle = Pokemon()
+    Squirtle.type = "Water"
+    Bulbasaur = Pokemon()
+    Bulbasaur.type = "Grass"
+    poke_party = [Charmander, Squirtle, Bulbasaur]
+
     charmander_i = tkinter.PhotoImage(file="Charmander.gif")
     squirtle_i = tkinter.PhotoImage(file="Squirtle.gif")
     bulbasaur_i = tkinter.PhotoImage(file="Bulbasaur.gif")
@@ -111,17 +102,17 @@ def party_window(mqtt_client, windows_and_number):
     charmander = ttk.Button(party_frame, image=charmander_i)
     charmander.image = charmander_i
     charmander.grid(row=0, column=0)
-    charmander['command'] = (lambda: set_current_pokemon(mqtt_client, False))
+    charmander['command'] = (lambda: set_current_pokemon(poke_party[0]))
 
     squirtle = ttk.Button(party_frame, image=squirtle_i)
     squirtle.image = squirtle_i
     squirtle.grid(row=0, column=1)
-    squirtle['command'] = (lambda: set_current_pokemon(mqtt_client, False))
+    squirtle['command'] = (lambda: set_current_pokemon(poke_party[1]))
 
     bulbasaur = ttk.Button(party_frame, image=bulbasaur_i)
     bulbasaur.image = bulbasaur_i
     bulbasaur.grid(row=1, column=0)
-    bulbasaur['command'] = (lambda: set_current_pokemon(mqtt_client, False))
+    bulbasaur['command'] = (lambda: set_current_pokemon(poke_party[2]))
 
     q_button = ttk.Button(party_frame, text="Quit")
     q_button.grid(row=4, column=2)
@@ -130,16 +121,6 @@ def party_window(mqtt_client, windows_and_number):
     e_button = ttk.Button(party_frame, text="Exit")
     e_button.grid(row=5, column=2)
     e_button['command'] = (lambda: quit_program(mqtt_client, True))
-
-
-def change_number(windows_and_number, delta):
-    """
-    Changes the number in the data by the given delta,
-    then displays the changed value in its Label.
-    """
-    windows_and_number.number = windows_and_number.number + delta
-    msg = 'The number is: {}'.format(windows_and_number.number)
-    windows_and_number.label['text'] = msg
 
 
 def pop_up(windows_and_number):
@@ -151,9 +132,13 @@ def pop_up(windows_and_number):
 
 
 def start_game(data):
-    """ Destroys all the windows stored in the given Data object. """
-    for k in range(len(data.windows)):
-        data.windows[k].destroy()
+    """Destroy start screen and pull up movement and party windows."""
+    data.windows.destroy()
+
+
+def set_current_pokemon(pokemon):
+    current_pokemon = pokemon
+    return current_pokemon
 
 
 def forward_callback(mqtt_client, left_speed, right_speed):
@@ -192,11 +177,19 @@ def quit_program(mqtt_client, shutdown_ev3):
     exit()
 
 
-"""
-def Grass_Walk():
-    
+def grass_walk(current_pokemon):
+    Gloom = Pokemon()
+    Gloom.type = "Grass"
+    time.sleep(5)
+    battle(current_pokemon, Gloom)
 
-def Surf():
-"""
+
+def surf(current_pokemon):
+    Magikarp = Pokemon()
+    Magikarp.type = "Water"
+    time.sleep(5)
+    battle(current_pokemon, Magikarp)
+
+
 
 main()

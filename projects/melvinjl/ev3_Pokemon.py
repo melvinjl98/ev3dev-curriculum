@@ -12,11 +12,21 @@ def main():
     mqtt_client = com.MqttClient(robot)
     mqtt_client.connect_to_pc()
 
-    if robot.color_sensor.color == ev3.ColorSensor.COLOR_GREEN:
-        mqtt_client.send_message("Grass_Walk")
+    grass = 17
+    water = 12
 
-    if robot.color_sensor.color == ev3.ColorSensor.COLOR_BLUE:
-        mqtt_client.send_message("Surf")
+    if robot.color_sensor.reflected_light_intensity == grass:
+        print("Entering Tall Grass")
+        mqtt_client.send_message("grass_walk")
+
+    if robot.color_sensor.reflected_light_intensity == water:
+        print("Squirtle use Surf.")
+        mqtt_client.send_message("surf")
+
+    if robot.ir_sensor.proximity < 2:
+        if robot.touch_sensor.is_pressed:
+            ev3.Sound.play("/home/robot/csse120/projects/melvinjl/recovery.wav")
+            print("Thank you! Your Pokémon are fighting fit! We hope to see you again!")
 
     robot.loop_forever()
 
