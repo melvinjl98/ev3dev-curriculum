@@ -27,7 +27,7 @@ def main():
     turn_speed = normal_speed / 2
     boost_speed = normal_speed * 2
     current_speed = normal_speed
-
+    drive(mqtt_client, normal_speed)
 
 def drive(mqtt_client, motor_speed):
     drive_window = tkinter.Toplevel()
@@ -40,7 +40,6 @@ def drive(mqtt_client, motor_speed):
 
 
 def forward_callback(mqtt_client, right_speed, left_speed):
-
 
 
 def brake_callback(mqtt_client):

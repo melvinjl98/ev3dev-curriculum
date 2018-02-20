@@ -17,7 +17,7 @@ def main():
         print("Entering Tall Grass")
         mqtt_client.send_message("grass_walk")
 
-    while 8 < robot.color_sensor.color <= 15:
+    while 8 < robot.color_sensor.reflected_light_intensity <= 15:
         print("Squirtle use Surf.")
         mqtt_client.send_message("surf")
 
