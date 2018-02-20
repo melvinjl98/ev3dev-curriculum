@@ -50,17 +50,15 @@ def main():
     bulbasaur = Pokemon()
     bulbasaur.type = "Grass"
 
-    current_pokemon = bulbasaur
-
     start_window(root)
     movement(party, mqtt_client, walk_speed)
-    party_window(party, mqtt_client, charmander, squirtle, bulbasaur, current_pokemon)
+    party_window(party, mqtt_client, charmander, squirtle, bulbasaur)
 
     root.mainloop()
 
 
 def start_window(root):
-    """Creates a window for the start scen image"""
+    """Creates a window for the start seen image"""
     start_frame = ttk.Frame(root, padding=0)
     start_frame.grid()
 
@@ -83,11 +81,13 @@ def movement(party, mqtt_client, walk_speed):
     party.bind('<j>', lambda event: send_down(mqtt_client))
 
 
-def party_window(party, mqtt_client, charmander, squirtle, bulbasaur, current_pokemon):
+def party_window(party, mqtt_client, charmander, squirtle, bulbasaur):
     """Create a window that displays your Pokemon party."""
 
     party_frame = ttk.Frame(party, padding=10)
     party_frame.grid()
+
+    current_pokemon = charmander
 
     charmander_i = tkinter.PhotoImage(file="Charmander.gif")
     squirtle_i = tkinter.PhotoImage(file="Squirtle.gif")
@@ -140,8 +140,9 @@ def party_window(party, mqtt_client, charmander, squirtle, bulbasaur, current_po
 
 
 def set_current_pokemon(pokemon, string):
+    current_pokemon = pokemon
     print("Current Pokemon is {}".format(string))
-    return pokemon
+    return current_pokemon
 
 
 def forward_callback(mqtt_client, left_speed, right_speed):
@@ -230,7 +231,7 @@ def battle(current_pokemon, wild_pokemon):
         current_pokemon.hp = current_pokemon.hp + current_pokemon.defense - wild_pokemon.attack
         print(wild_pokemon.hp, current_pokemon.hp)
 
-    if current_pokemon.hp == 0:
+    if current_pokemon.hp <= 0:
         print("Trainer whited out.")
         return
 

@@ -257,7 +257,7 @@ class Snatch3r(object):
                     if current_distance == 0:
                         self.stop_bot()
                         time.sleep(.25)
-                        self.drive_inches(2.7, forward_speed)
+                        self.drive_inches(2.75, forward_speed)
                         time.sleep(.25)
                         self.arm_up()
                         if self.touch_sensor.is_pressed:
