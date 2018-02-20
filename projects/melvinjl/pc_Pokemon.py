@@ -31,15 +31,7 @@ class Pokemon(object):
         self.defense = 25
 
 
-class WindowsAndNumber(object):
-    def __init__(self):
-        self.number = None
-        self.label = None
-        self.windows = []
-
-
 def main():
-
     my_delegate = MyDelegate()
     mqtt_client = com.MqttClient(my_delegate)
     mqtt_client.connect_to_ev3()
@@ -47,44 +39,7 @@ def main():
     root = tkinter.Tk()
     root.title("                            Pokemon Red: Remastered Edition")
 
-    walk_speed = 300
-
-    start_window(root, mqtt_client)
-    movement(mqtt_client, walk_speed)
-    party_window(mqtt_client)
-
-    root.mainloop()
-
-
-def start_window(root, mqtt_client):
-    start_frame = ttk.Frame(root, padding=0)
-    start_frame.grid()
-
-    press_start = ttk.Button(start_frame, image=tkinter.PhotoImage(file="red_start.gif"))
-    press_start.image = tkinter.PhotoImage(file="red_start.gif")
-    press_start.grid()
-    press_start['command'] = lambda: start_game(start_frame, mqtt_client)
-
-
-def movement(mqtt_client, walk_speed):
-    """Creates an invisible window that binds robot movement to keyboard controls."""
-    movement_win = tkinter.Toplevel()
-
-    movement_win.bind('<Up>', lambda event: forward_callback(mqtt_client, walk_speed, walk_speed))
-    movement_win.bind('<Down>', lambda event: back_callback(mqtt_client, walk_speed, walk_speed))
-    movement_win.bind('<Left>', lambda event: left_callback(mqtt_client, walk_speed, walk_speed))
-    movement_win.bind('<Right>', lambda event: right_callback(mqtt_client, walk_speed, walk_speed))
-    movement_win.bind('<space>', lambda event: stop_callback(mqtt_client))
-    movement_win.bind('<u>', lambda event: send_up(mqtt_client))
-    movement_win.bind('<j>', lambda event: send_down(mqtt_client))
-
-
-def party_window(mqtt_client):
-    """Create a window that displays your Pokemon party."""
-    party = tkinter.Toplevel()
-
-    party_frame = ttk.Frame(party, padding=20)
-    party_frame.grid()
+    walk_speed = 500
 
     charmander = Pokemon()
     charmander.type = "Fire"
@@ -92,6 +47,43 @@ def party_window(mqtt_client):
     squirtle.type = "Water"
     bulbasaur = Pokemon()
     bulbasaur.type = "Grass"
+
+    start_window(root)
+    movement(root, mqtt_client, walk_speed)
+    party_window(mqtt_client, charmander, squirtle, bulbasaur)
+
+    root.mainloop()
+
+
+def start_window(root):
+    start_frame = ttk.Frame(root, padding=0)
+    start_frame.grid()
+
+    start_screen = tkinter.PhotoImage(file="red_start.gif")
+
+    press_start = ttk.Button(start_frame, image= start_screen)
+    press_start.image = start_screen
+    press_start.grid()
+
+
+def movement(root, mqtt_client, walk_speed):
+    """Creates an invisible window that binds robot movement to keyboard controls."""
+
+    root.bind('<Up>', lambda event: forward_callback(mqtt_client, walk_speed, walk_speed))
+    root.bind('<Down>', lambda event: back_callback(mqtt_client, walk_speed, walk_speed))
+    root.bind('<Left>', lambda event: left_callback(mqtt_client, walk_speed, walk_speed))
+    root.bind('<Right>', lambda event: right_callback(mqtt_client, walk_speed, walk_speed))
+    root.bind('<space>', lambda event: stop_callback(mqtt_client))
+    root.bind('<u>', lambda event: send_up(mqtt_client))
+    root.bind('<j>', lambda event: send_down(mqtt_client))
+
+
+def party_window(mqtt_client, charmander, squirtle, bulbasaur):
+    """Create a window that displays your Pokemon party."""
+    party = tkinter.Toplevel()
+
+    party_frame = ttk.Frame(party, padding=20)
+    party_frame.grid()
 
     charmander_i = tkinter.PhotoImage(file="Charmander.gif")
     squirtle_i = tkinter.PhotoImage(file="Squirtle.gif")
@@ -112,12 +104,16 @@ def party_window(mqtt_client):
     bulbasaur_b.grid(row=1, column=0)
     bulbasaur_b['command'] = (lambda: set_current_pokemon(bulbasaur))
 
+    heal_button = ttk.Button(party_frame, text="Heal")
+    heal_button.grid(row=4, column=2)
+    heal_button['command'] = (lambda: poke_center(mqtt_client))
+
     q_button = ttk.Button(party_frame, text="Quit")
-    q_button.grid(row=4, column=2)
+    q_button.grid(row=5, column=2)
     q_button['command'] = (lambda: quit_program(mqtt_client, False))
 
     e_button = ttk.Button(party_frame, text="Exit")
-    e_button.grid(row=5, column=2)
+    e_button.grid(row=6, column=2)
     e_button['command'] = (lambda: quit_program(mqtt_client, True))
 
     menubar = tkinter.Menu(party)
@@ -133,18 +129,10 @@ def party_window(mqtt_client):
     music_menu.add_command(label='Champion', command=lambda: mqtt_client.send_message('play_music', [3]))
 
 
-def pop_up(windows_and_number):
-    """ Pops up a window, with a Label that shows some info. """
-    window = tkinter.Toplevel()  # Note Toplevel, NOT Tk.
-    msg = 'The number is: \n {}'.format(windows_and_number.number)
-    label = ttk.Label(window, text=msg)
-    label.grid()
-
-
-def start_game(data, mqtt_client):
+def start_game(data, mqtt_client, charmander, squirtle, bulbasaur):
     """Destroy start screen and pull up movement and party windows."""
     data.destroy()
-    party_window(mqtt_client)
+    party_window(mqtt_client, charmander, squirtle, bulbasaur)
 
 
 def set_current_pokemon(pokemon):
@@ -239,6 +227,11 @@ def battle(current_pokemon, wild_pokemon):
     else:
         print("You got away safely.")
         return
+
+
+def poke_center(mqtt_client):
+    """send message to robot to look for the PokeCenter beacon"""
+    mqtt_client.send_message("seek_beacon_pokemon")
 
 
 main()

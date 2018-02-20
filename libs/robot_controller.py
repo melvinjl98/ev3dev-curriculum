@@ -230,6 +230,41 @@ class Snatch3r(object):
         if music_number == 3:
             ev3.Sound.play("/home/robot/csse120/projects/melvinjl/champion.wav")
 
+
+    def seek_beacon_pokemon(self):
+        """Creates a specialized beacon seeking function to find the beacon and heal the pokemon party."""
+        beacon_seeker = ev3.BeaconSeeker(channel=1)
+        forward_speed = 300
+        turn_speed = 100
+
+        while True:
+            current_heading = beacon_seeker.heading
+            current_distance = beacon_seeker.distance
+            if current_distance == -128:
+                self.drive(turn_speed, -turn_speed)
+            else:
+                if math.fabs(current_heading) < math.fabs(2):
+                    if current_distance == 0:
+                        self.stop_bot()
+                        self.drive_inches(2.75, forward_speed)
+                        self.arm_up()
+                        if self.touch_sensor.is_pressed:
+                            ev3.Sound.play("/home/robot/csse120/projects/melvinjl/recovery.wav")
+                            print("Thank you! Your Pokémon are fighting fit! We hope to see you again!")
+                            self.arm_down()
+                            return True
+                    else:
+                        self.drive(forward_speed, forward_speed)
+                elif math.fabs(current_heading) < 10:
+                    print("Adjusting heading: ", current_heading)
+                    if current_heading < 0:
+                        self.drive(-turn_speed, turn_speed)
+                    else:
+                        self.drive(turn_speed, -turn_speed)
+                else:
+                    self.drive(turn_speed, -turn_speed)
+
+
 #   mckeenms
 
 #   makinewg
