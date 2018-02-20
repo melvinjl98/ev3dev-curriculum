@@ -20,15 +20,22 @@ import mqtt_remote_method_calls as com
 
 class MyDelegate(object):
     def __init__(self):
-        self.running=True
+        self.running = True
 
 
 class Pokemon(object):
     def __init__(self):
-        self.type=None
-        self.hp=50
-        self.attack=37.5
-        self.defense=25
+        self.type = None
+        self.hp = 50
+        self.attack = 37.5
+        self.defense = 25
+
+
+class WindowsAndNumber(object):
+    def __init__(self):
+        self.number = None
+        self.label = None
+        self.windows = []
 
 
 def main():
@@ -42,29 +49,21 @@ def main():
 
     walk_speed = 300
 
-    start_window(root)
+    start_window(root, mqtt_client)
     movement(mqtt_client, walk_speed)
     party_window(mqtt_client)
 
     root.mainloop()
 
 
-def start_window(root, windows_and_number):
-    """ Puts Buttons on the main window. """
+def start_window(root, mqtt_client):
     start_frame = ttk.Frame(root, padding=0)
     start_frame.grid()
 
     press_start = ttk.Button(start_frame, image=tkinter.PhotoImage(file="red_start.gif"))
     press_start.image = tkinter.PhotoImage(file="red_start.gif")
     press_start.grid()
-    press_start['command'] = lambda: start_game(windows_and_number)
-
-"""
-    destroy_button = ttk.Button(window1_frame,
-                                text='Destroy some windows')
-    destroy_button.grid()
-    destroy_button['command'] = lambda: start_game(windows)
-"""
+    press_start['command'] = lambda: start_game(start_frame, mqtt_client)
 
 
 def movement(mqtt_client, walk_speed):
@@ -80,39 +79,38 @@ def movement(mqtt_client, walk_speed):
     movement_win.bind('<j>', lambda event: send_down(mqtt_client))
 
 
-def party_window(mqtt_client, windows_and_number):
+def party_window(mqtt_client):
     """Create a window that displays your Pokemon party."""
     party = tkinter.Toplevel()
 
     party_frame = ttk.Frame(party, padding=20)
     party_frame.grid()
 
-    Charmander = Pokemon()
-    Charmander.type = "Fire"
-    Squirtle = Pokemon()
-    Squirtle.type = "Water"
-    Bulbasaur = Pokemon()
-    Bulbasaur.type = "Grass"
-    poke_party = [Charmander, Squirtle, Bulbasaur]
+    charmander = Pokemon()
+    charmander.type = "Fire"
+    squirtle = Pokemon()
+    squirtle.type = "Water"
+    bulbasaur = Pokemon()
+    bulbasaur.type = "Grass"
 
     charmander_i = tkinter.PhotoImage(file="Charmander.gif")
     squirtle_i = tkinter.PhotoImage(file="Squirtle.gif")
     bulbasaur_i = tkinter.PhotoImage(file="Bulbasaur.gif")
 
-    charmander = ttk.Button(party_frame, image=charmander_i)
-    charmander.image = charmander_i
-    charmander.grid(row=0, column=0)
-    charmander['command'] = (lambda: set_current_pokemon(poke_party[0]))
+    charmander_b = ttk.Button(party_frame, image=charmander_i)
+    charmander_b.image = charmander_i
+    charmander_b.grid(row=0, column=0)
+    charmander_b['command'] = (lambda: set_current_pokemon(charmander))
 
-    squirtle = ttk.Button(party_frame, image=squirtle_i)
-    squirtle.image = squirtle_i
-    squirtle.grid(row=0, column=1)
-    squirtle['command'] = (lambda: set_current_pokemon(poke_party[1]))
+    squirtle_b = ttk.Button(party_frame, image=squirtle_i)
+    squirtle_b.image = squirtle_i
+    squirtle_b.grid(row=0, column=1)
+    squirtle_b['command'] = (lambda: set_current_pokemon(squirtle))
 
-    bulbasaur = ttk.Button(party_frame, image=bulbasaur_i)
-    bulbasaur.image = bulbasaur_i
-    bulbasaur.grid(row=1, column=0)
-    bulbasaur['command'] = (lambda: set_current_pokemon(poke_party[2]))
+    bulbasaur_b = ttk.Button(party_frame, image=bulbasaur_i)
+    bulbasaur_b.image = bulbasaur_i
+    bulbasaur_b.grid(row=1, column=0)
+    bulbasaur_b['command'] = (lambda: set_current_pokemon(bulbasaur))
 
     q_button = ttk.Button(party_frame, text="Quit")
     q_button.grid(row=4, column=2)
@@ -121,6 +119,18 @@ def party_window(mqtt_client, windows_and_number):
     e_button = ttk.Button(party_frame, text="Exit")
     e_button.grid(row=5, column=2)
     e_button['command'] = (lambda: quit_program(mqtt_client, True))
+
+    menubar = tkinter.Menu(party)
+    party['menu'] = menubar
+
+    music_menu = tkinter.Menu(menubar)
+    menubar.add_cascade(menu=music_menu, label='Music')
+
+    music_menu.add_command(label='Opening', command=lambda: mqtt_client.send_message('play_music', [1]))
+
+    music_menu.add_command(label='Battle', command=lambda: mqtt_client.send_message('play_music', [2]))
+
+    music_menu.add_command(label='Champion', command=lambda: mqtt_client.send_message('play_music', [3]))
 
 
 def pop_up(windows_and_number):
@@ -131,13 +141,15 @@ def pop_up(windows_and_number):
     label.grid()
 
 
-def start_game(data):
+def start_game(data, mqtt_client):
     """Destroy start screen and pull up movement and party windows."""
-    data.windows.destroy()
+    data.destroy()
+    party_window(mqtt_client)
 
 
 def set_current_pokemon(pokemon):
     current_pokemon = pokemon
+    print("Current Pokemon is {}".format(current_pokemon))
     return current_pokemon
 
 
@@ -178,18 +190,55 @@ def quit_program(mqtt_client, shutdown_ev3):
 
 
 def grass_walk(current_pokemon):
-    Gloom = Pokemon()
-    Gloom.type = "Grass"
+    gloom = Pokemon()
+    gloom.type = "Grass"
     time.sleep(5)
-    battle(current_pokemon, Gloom)
+    battle(current_pokemon, gloom)
 
 
 def surf(current_pokemon):
-    Magikarp = Pokemon()
-    Magikarp.type = "Water"
+    magikarp = Pokemon()
+    magikarp.type = "Water"
     time.sleep(5)
-    battle(current_pokemon, Magikarp)
+    battle(current_pokemon, magikarp)
 
+
+def battle(current_pokemon, wild_pokemon):
+    if current_pokemon.type == "Fire" and wild_pokemon.type == "Grass":
+        current_pokemon.hp = current_pokemon.hp + current_pokemon.defense - wild_pokemon.attack
+        wild_pokemon.hp = wild_pokemon.hp + wild_pokemon.defense - (2 * current_pokemon.attack)
+
+    if current_pokemon.type == "Fire" and wild_pokemon.type == "Water":
+        wild_pokemon.hp = wild_pokemon.hp + wild_pokemon.defense - (.5 * current_pokemon.attack)
+        current_pokemon.hp = current_pokemon.hp + current_pokemon.defense - (2 * wild_pokemon.attack)
+
+    if current_pokemon.type == "Water" and wild_pokemon.type == "Grass":
+        current_pokemon.hp = current_pokemon.hp + current_pokemon.defense - (2 * wild_pokemon.attack)
+        wild_pokemon.hp = wild_pokemon.hp + wild_pokemon.defense - current_pokemon.attack
+
+    if current_pokemon.type == "Water" and wild_pokemon.type == "Water":
+        wild_pokemon.hp = wild_pokemon.hp + wild_pokemon.defense - current_pokemon.attack
+        current_pokemon.hp = current_pokemon.hp + current_pokemon.defense - wild_pokemon.attack
+
+    if current_pokemon.type == "Grass" and wild_pokemon.type == "Grass":
+        current_pokemon.hp = current_pokemon.hp + current_pokemon.defense - wild_pokemon.attack
+        wild_pokemon.hp = wild_pokemon.hp + wild_pokemon.defense - current_pokemon.attack
+
+    if current_pokemon.type == "Grass" and wild_pokemon.type == "Water":
+        wild_pokemon.hp = wild_pokemon.hp + wild_pokemon.defense - (2 * current_pokemon.attack)
+        current_pokemon.hp = current_pokemon.hp + current_pokemon.defense - wild_pokemon.attack
+
+    if current_pokemon.hp == 0:
+        print("Trainer whited out.")
+        return
+
+    elif wild_pokemon == 0:
+        print("You are victorious.")
+        return
+
+    else:
+        print("You got away safely.")
+        return
 
 
 main()
