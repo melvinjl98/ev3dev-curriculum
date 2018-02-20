@@ -48,9 +48,11 @@ def main():
     bulbasaur = Pokemon()
     bulbasaur.type = "Grass"
 
+    current_pokemon = charmander
+
     start_window(root)
     movement(root, mqtt_client, walk_speed)
-    party_window(mqtt_client, charmander, squirtle, bulbasaur)
+    party_window(mqtt_client, charmander, squirtle, bulbasaur, current_pokemon)
 
     root.mainloop()
 
@@ -61,7 +63,7 @@ def start_window(root):
 
     start_screen = tkinter.PhotoImage(file="red_start.gif")
 
-    press_start = ttk.Button(start_frame, image= start_screen)
+    press_start = ttk.Button(start_frame, image=start_screen)
     press_start.image = start_screen
     press_start.grid()
 
@@ -78,11 +80,11 @@ def movement(root, mqtt_client, walk_speed):
     root.bind('<j>', lambda event: send_down(mqtt_client))
 
 
-def party_window(mqtt_client, charmander, squirtle, bulbasaur):
+def party_window(mqtt_client, charmander, squirtle, bulbasaur, current_pokemon):
     """Create a window that displays your Pokemon party."""
     party = tkinter.Toplevel()
 
-    party_frame = ttk.Frame(party, padding=20)
+    party_frame = ttk.Frame(party, padding=10)
     party_frame.grid()
 
     charmander_i = tkinter.PhotoImage(file="Charmander.gif")
@@ -92,28 +94,32 @@ def party_window(mqtt_client, charmander, squirtle, bulbasaur):
     charmander_b = ttk.Button(party_frame, image=charmander_i)
     charmander_b.image = charmander_i
     charmander_b.grid(row=0, column=0)
-    charmander_b['command'] = (lambda: set_current_pokemon(charmander))
+    charmander_b['command'] = (lambda: set_current_pokemon(charmander, "Charmander"))
 
     squirtle_b = ttk.Button(party_frame, image=squirtle_i)
     squirtle_b.image = squirtle_i
     squirtle_b.grid(row=0, column=1)
-    squirtle_b['command'] = (lambda: set_current_pokemon(squirtle))
+    squirtle_b['command'] = (lambda: set_current_pokemon(squirtle, "Squirtle"))
 
     bulbasaur_b = ttk.Button(party_frame, image=bulbasaur_i)
     bulbasaur_b.image = bulbasaur_i
     bulbasaur_b.grid(row=1, column=0)
-    bulbasaur_b['command'] = (lambda: set_current_pokemon(bulbasaur))
+    bulbasaur_b['command'] = (lambda: set_current_pokemon(bulbasaur, "Bulbasaur"))
 
     heal_button = ttk.Button(party_frame, text="Heal")
-    heal_button.grid(row=4, column=2)
+    heal_button.grid(row=4, column=0)
     heal_button['command'] = (lambda: poke_center(mqtt_client))
 
+    grass_button = ttk.Button(party_frame, text="Search Grass")
+    grass_button.grid(row=4, column=1)
+    grass_button['command'] = (lambda: grass_walk(current_pokemon))
+
     q_button = ttk.Button(party_frame, text="Quit")
-    q_button.grid(row=5, column=2)
+    q_button.grid(row=4, column=1)
     q_button['command'] = (lambda: quit_program(mqtt_client, False))
 
     e_button = ttk.Button(party_frame, text="Exit")
-    e_button.grid(row=6, column=2)
+    e_button.grid(row=4, column=2)
     e_button['command'] = (lambda: quit_program(mqtt_client, True))
 
     menubar = tkinter.Menu(party)
@@ -121,24 +127,18 @@ def party_window(mqtt_client, charmander, squirtle, bulbasaur):
 
     music_menu = tkinter.Menu(menubar)
     menubar.add_cascade(menu=music_menu, label='Music')
-
     music_menu.add_command(label='Opening', command=lambda: mqtt_client.send_message('play_music', [1]))
-
     music_menu.add_command(label='Battle', command=lambda: mqtt_client.send_message('play_music', [2]))
-
     music_menu.add_command(label='Champion', command=lambda: mqtt_client.send_message('play_music', [3]))
 
+    wild_menu = tkinter.Menu(menubar)
+    menubar.add_cascade(menu=wild_menu, label='Wild')
+    wild_menu.add_command(label='Grass', command=lambda: grass_walk(current_pokemon))
+    wild_menu.add_command(label='Water', command=lambda: surf(current_pokemon))
 
-def start_game(data, mqtt_client, charmander, squirtle, bulbasaur):
-    """Destroy start screen and pull up movement and party windows."""
-    data.destroy()
-    party_window(mqtt_client, charmander, squirtle, bulbasaur)
-
-
-def set_current_pokemon(pokemon):
-    current_pokemon = pokemon
-    print("Current Pokemon is {}".format(current_pokemon))
-    return current_pokemon
+def set_current_pokemon(pokemon, string):
+    print("Current Pokemon is {}".format(string))
+    return pokemon
 
 
 def forward_callback(mqtt_client, left_speed, right_speed):

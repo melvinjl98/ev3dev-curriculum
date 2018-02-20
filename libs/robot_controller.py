@@ -34,9 +34,9 @@ class Snatch3r(object):
         assert self.right_motor.connected
         assert self.arm_motor.connected
         assert self.touch_sensor.connected
-        assert self.color_sensor
-        assert self.ir_sensor
-        assert self.pixy
+        assert self.color_sensor.connected
+        assert self.ir_sensor.connected
+        assert self.pixy.connected
 
     def drive_inches(self, inches_target, speed_deg_per_second):
         """"Drives to a given relative position with a given speed"""
@@ -45,6 +45,7 @@ class Snatch3r(object):
         self.left_motor.wait_while(ev3.Motor.STATE_RUNNING)
         self.right_motor.wait_while(ev3.Motor.STATE_RUNNING)
         # ev3.Sound.beep().wait()
+
 
     def turn_degrees(self, degrees_to_turn, turn_speed_sp):
         """turn a given degrees at a given speed"""
@@ -241,12 +242,11 @@ class Snatch3r(object):
         if music_number == 3:
             ev3.Sound.play("/home/robot/csse120/projects/melvinjl/champion.wav")
 
-
     def seek_beacon_pokemon(self):
         """Creates a specialized beacon seeking function to find the beacon and heal the pokemon party."""
         beacon_seeker = ev3.BeaconSeeker(channel=1)
-        forward_speed = 300
-        turn_speed = 100
+        forward_speed = 500
+        turn_speed = 300
 
         while True:
             current_heading = beacon_seeker.heading
@@ -257,13 +257,15 @@ class Snatch3r(object):
                 if math.fabs(current_heading) < math.fabs(2):
                     if current_distance == 0:
                         self.stop_bot()
+                        time.sleep(.25)
                         self.drive_inches(2.75, forward_speed)
+                        time.sleep(.25)
                         self.arm_up()
                         if self.touch_sensor.is_pressed:
                             ev3.Sound.play("/home/robot/csse120/projects/melvinjl/recovery.wav")
-                            print("Thank you! Your Pokémon are fighting fit! We hope to see you again!")
+                            print("Thank you! Your Pokemon are fighting fit! We hope to see you again!")
                             self.arm_down()
-                            return True
+                            break
                     else:
                         self.drive(forward_speed, forward_speed)
                 elif math.fabs(current_heading) < 10:
