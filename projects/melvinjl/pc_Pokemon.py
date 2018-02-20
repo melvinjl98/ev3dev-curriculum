@@ -48,11 +48,11 @@ def main():
     bulbasaur = Pokemon()
     bulbasaur.type = "Grass"
 
-    pokemon = charmander
+    current_pokemon = charmander
 
     start_window(root)
     movement(root, mqtt_client, walk_speed)
-    party_window(mqtt_client, charmander, squirtle, bulbasaur)
+    party_window(mqtt_client, charmander, squirtle, bulbasaur, current_pokemon)
 
     root.mainloop()
 
@@ -80,7 +80,7 @@ def movement(root, mqtt_client, walk_speed):
     root.bind('<j>', lambda event: send_down(mqtt_client))
 
 
-def party_window(mqtt_client, charmander, squirtle, bulbasaur):
+def party_window(mqtt_client, charmander, squirtle, bulbasaur, current_pokemon):
     """Create a window that displays your Pokemon party."""
     party = tkinter.Toplevel()
 
@@ -110,6 +110,10 @@ def party_window(mqtt_client, charmander, squirtle, bulbasaur):
     heal_button.grid(row=4, column=0)
     heal_button['command'] = (lambda: poke_center(mqtt_client))
 
+    grass_button = ttk.Button(party_frame, text="Search Grass")
+    grass_button.grid(row=4, column=1)
+    grass_button['command'] = (lambda: grass_walk(current_pokemon))
+
     q_button = ttk.Button(party_frame, text="Quit")
     q_button.grid(row=4, column=1)
     q_button['command'] = (lambda: quit_program(mqtt_client, False))
@@ -123,13 +127,14 @@ def party_window(mqtt_client, charmander, squirtle, bulbasaur):
 
     music_menu = tkinter.Menu(menubar)
     menubar.add_cascade(menu=music_menu, label='Music')
-
     music_menu.add_command(label='Opening', command=lambda: mqtt_client.send_message('play_music', [1]))
-
     music_menu.add_command(label='Battle', command=lambda: mqtt_client.send_message('play_music', [2]))
-
     music_menu.add_command(label='Champion', command=lambda: mqtt_client.send_message('play_music', [3]))
 
+    wild_menu = tkinter.Menu(menubar)
+    menubar.add_cascade(menu=wild_menu, label='Wild')
+    wild_menu.add_command(label='Grass', command=lambda: grass_walk(current_pokemon))
+    wild_menu.add_command(label='Water', command=lambda: surf(current_pokemon))
 
 def set_current_pokemon(pokemon, string):
     print("Current Pokemon is {}".format(string))
