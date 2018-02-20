@@ -11,11 +11,12 @@ import robot_controller as robo
 import mqtt_remote_method_calls as mqtt
 
 def main():
+    robot = robo.Snatch3r()
+    mqtt_client = mqtt.MqttClient(robot)
+    mqtt_client.connect_to_pc()
+
     while not robot.touch_sensor.is_pressed:
         print('running')
-        robot = robo.Snatch3r()
-        mqtt_client = mqtt.MqttClient(robot)
-        mqtt_client.connect_to_pc()
 
         #finish_line = 17
         boost = 13
