@@ -127,6 +127,17 @@ class Snatch3r(object):
         self.left_motor.stop(stop_action="brake")
         self.right_motor.stop(stop_action="brake")
 
+    def boost(self, left_speed, right_speed):
+        """Doubles speed for 5 seconds"""
+        self.left_motor.run_forever(speed_sp = 2 * left_speed)
+        self.right_motor.run_forever(speed_sp = 2 *right_speed)
+
+        self.left_motor.wait(5000)
+        self.right_motor.wait(5000)
+
+        self.left_motor.run_forever(speed_sp = left_speed)
+        self.right_motor.run_forever(speed_sp = right_speed)
+
     def firetruck(self):
 
         while not self.touch_sensor.is_pressed:

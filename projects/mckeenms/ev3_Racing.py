@@ -3,8 +3,11 @@ Author: Mason McKeen
 """
 
 import ev3dev.ev3 as ev3
+
 import time
+
 import robot_controller as robo
+
 import mqtt_remote_method_calls as mqtt
 
 lap = 0
@@ -15,8 +18,8 @@ def main(lap):
     mqtt_client.connect_to_pc()
 
     finish_line = 17
-    boost = 12
-    oil = 3
+    boost = 13
+    oil = 11
 
     if robot.color_sensor.reflected_light_intensity == finish_line:
         lap = lap + 1
@@ -28,7 +31,9 @@ def main(lap):
             print('Lap Number', lap)
 
     if robot.color_sensor.reflected_light_intensity == boost:
-        'thing'
+        if boost < 3:
+            print('Gained Boost')
+            boost = boost + 1
 
     if robot.color_sensor.reflected_light_intensity == oil:
         robot.drive_inches(2, 400)

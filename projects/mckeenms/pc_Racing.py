@@ -8,7 +8,7 @@ import time
 import tkinter
 from tkinter import ttk
 
-import mqtt_remote_method_calls as mqtt
+import mqtt_remote_method_calls as com
 
 
 class MyDelegate(object):
@@ -17,42 +17,50 @@ class MyDelegate(object):
 
 def main():
     my_delegate = MyDelegate()
-    mqtt_client = mqtt.MqttClient(my_delegate)
+    mqtt_client = com.MqttClient(my_delegate)
     mqtt_client.connect_to_ev3()
 
     root = tkinter.Tk()
     title = 'Super Fast Vroom Cars'
 
     normal_speed = 400
-    turn_speed = normal_speed / 2
-    boost_speed = normal_speed * 2
-    current_speed = normal_speed
+
+    gui(root)
+    driving(root, mqtt_client, normal_speed)
 
 
-def drive(mqtt_client, motor_speed):
-    drive_window = tkinter.Toplevel()
-
-    drive_window.bind('<Up>', lambda event: forward_callback(mqtt_client, motor_speed, motor_speed))
-    drive_window.bind('<Down>', lambda event: brake_callback(mqtt_client))
-    drive_window.bind('<Left>', lambda event: left_callback(mqtt_client, motor_speed, motor_speed))
-    drive_window.bind('<Right>', lambda event: right_callback(mqtt_client, motor_speed, motor_speed))
-    drive_window.bind('<space>', lambda event: boost_callback(mqtt_client))
+def driving(root, mqtt_client, current_speed):
+    root.bind('<Up>', lambda event: forward_callback(mqtt_client, current_speed, current_speed))
+    root.bind('<Down>', lambda event: back_callback(mqtt_client))
+    root.bind('<Left>', lambda event: left_callback(mqtt_client, current_speed, current_speed))
+    root.bind('<Right>', lambda event: right_callback(mqtt_client, current_speed, current_speed))
+    root.bind('<space>', lambda event: boost_callback(mqtt_client))
 
 
-def forward_callback(mqtt_client, right_speed, left_speed):
-    
+def forward_callback(mqtt_client, left_speed, right_speed):
+    mqtt_client.send_message("drive", [left_speed, right_speed])
 
 
-def brake_callback(mqtt_client):
+def left_callback(mqtt_client, left_speed, right_speed):
+    mqtt_client.send_message("turn_left", [left_speed, right_speed])
 
 
-def right_callback(mqtt_client, right_speed, left_speed):
+def stop_callback(mqtt_client):
+    mqtt_client.send_message("stop_bot")
 
 
+def right_callback(mqtt_client, left_speed, right_speed):
+    mqtt_client.send_message("turn_right", [left_speed, right_speed])
 
-def left_callback(mqtt_client, right_speed, left_speed):
-    ''
+
+def back_callback(mqtt_client, left_speed, right_speed):
+    mqtt_client.send_message("back", [left_speed, right_speed])
 
 
-def boost_callback(mqtt_client, current_speed):
-    ''
+def boost_callback(mqtt_client, left_speed, right_speed):
+    mqtt_client.send_message("boost", [left_speed, right_speed])
+
+
+def gui(root):
+    start_frame = ttk.Frame(root, padding=0)
+    start_frame.grid()
