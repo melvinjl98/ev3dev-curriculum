@@ -246,7 +246,7 @@ class Snatch3r(object):
                 if math.fabs(current_heading) < math.fabs(2):
                     if current_distance == 0:
                         self.stop_bot()
-                        self.drive_inches(2.75, forward_speed)
+                        self.drive_inches(2.65, forward_speed)
                         self.arm_up()
                         if self.touch_sensor.is_pressed:
                             ev3.Sound.play("/home/robot/csse120/projects/melvinjl/recovery.wav")

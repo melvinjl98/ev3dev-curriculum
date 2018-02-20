@@ -21,7 +21,7 @@ def main():
     mqtt_client.connect_to_ev3()
 
     root = tkinter.Tk()
-    title = 'Super Fast Vroom Cars'
+    root.title = 'Super Fast Vroom Cars'
 
     normal_speed = 400
     turn_speed = normal_speed / 2
@@ -40,14 +40,14 @@ def drive(mqtt_client, motor_speed):
 
 
 def forward_callback(mqtt_client, right_speed, left_speed):
-    
+
 
 
 def brake_callback(mqtt_client):
-
+    ''
 
 def right_callback(mqtt_client, right_speed, left_speed):
-
+    ''
 
 
 def left_callback(mqtt_client, right_speed, left_speed):
