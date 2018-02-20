@@ -108,12 +108,9 @@ def party_window(party, mqtt_client, charmander, squirtle, bulbasaur, current_po
     bulbasaur_b.grid(row=1, column=0)
     bulbasaur_b['command'] = (lambda: set_current_pokemon(bulbasaur, "Bulbasaur"))
 
-    hp = 0
-
     heal_button = ttk.Button(party_frame, text="Heal")
     heal_button.grid(row=4, column=0)
-    heal_button['command'] = (lambda: poke_center(mqtt_client))
-
+    heal_button['command'] = (lambda: poke_center(mqtt_client, charmander, squirtle, bulbasaur))
 
     grass_button = ttk.Button(party_frame, text="Search Grass")
     grass_button.grid(row=4, column=1)
@@ -140,6 +137,7 @@ def party_window(party, mqtt_client, charmander, squirtle, bulbasaur, current_po
     menubar.add_cascade(menu=wild_menu, label='Wild')
     wild_menu.add_command(label='Grass', command=lambda: grass_walk(current_pokemon))
     wild_menu.add_command(label='Water', command=lambda: surf(current_pokemon))
+
 
 def set_current_pokemon(pokemon, string):
     print("Current Pokemon is {}".format(string))
@@ -247,11 +245,12 @@ def battle(current_pokemon, wild_pokemon):
 
 def poke_center(mqtt_client, charmander, squirtle, bulbasaur):
     """send message to robot to look for the PokeCenter beacon"""
-    hp = 0
     mqtt_client.send_message("seek_beacon_pokemon")
+    hp = 50
     charmander.hp = hp
     bulbasaur.hp = hp
     squirtle.hp = hp
+    print("c.hp={}, s.hp={}, b.hp={}".format(charmander.hp, squirtle.hp, bulbasaur.hp))
 
 
 main()

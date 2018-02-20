@@ -257,15 +257,14 @@ class Snatch3r(object):
                     if current_distance == 0:
                         self.stop_bot()
                         time.sleep(.25)
-                        self.drive_inches(2.75, forward_speed)
+                        self.drive_inches(2.7, forward_speed)
                         time.sleep(.25)
                         self.arm_up()
                         if self.touch_sensor.is_pressed:
                             ev3.Sound.play("/home/robot/csse120/projects/melvinjl/recovery.wav")
                             print("Thank you! Your Pokemon are fighting fit! We hope to see you again!")
                             self.arm_down()
-                            hp = 50
-                            return hp
+                            break
                     else:
                         self.drive(forward_speed, forward_speed)
                 elif math.fabs(current_heading) < 10:
